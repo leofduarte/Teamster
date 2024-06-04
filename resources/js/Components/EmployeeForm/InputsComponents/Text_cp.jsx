@@ -14,30 +14,30 @@ function Text_CP({ id, item, value, onInputChange, onEditItem, handleDeleteItem,
 
    return (
     <div className="flex items-center justify-between">
-        <div className="flex items-center w-full">
+        <div className="flex w-full items-center">
             <div className="flex-grow">
                 <div className="flex">
                     {showGrab && (
-                        <button className="cursor-grab mr-6">
+                        <button className="mr-6 cursor-grab">
                             <FontAwesomeIcon
                                 ref={setNodeRef}
                                 {...attributes}
                                 {...listeners}
-                                className="text-black cursor-grab text-xl"
+                                className="cursor-grab text-xl text-black"
                                 icon={faGripVertical}
                             />
                         </button>
                     )}
-                    <div className="flex items-center w-full">
+                    <div className="flex w-full items-center">
                         <div className={"flex-col w-full"}>
                              <div className={"flex items-center w-full gap-2 "}>
-                        <Label className="text-black text-xl">{item.label}</Label>
+                        <Label className="text-xl text-black">{item.label}</Label>
                         {item.tooltip && (
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <FontAwesomeIcon
-                                            className="text-black cursor-pointer"
+                                            className="cursor-pointer text-black"
                                             icon={faCircleInfo}
                                         />
                                     </TooltipTrigger>
@@ -51,17 +51,17 @@ function Text_CP({ id, item, value, onInputChange, onEditItem, handleDeleteItem,
                         value={value}
                         onChange={handleChange}
                         placeholder={item.placeholder}
-                        className="text-black w-full"
+                        className="w-full text-black"
                     />
                         {item.description && (
-                            <p className="text-black text-xs mt-1 ms-2 text-start cursor-auto">
+                            <p className="mt-1 cursor-auto text-start text-xs text-black ms-2">
                                 {item.description}
                             </p>
                         )}
                         </div>
                     </div>
                     {showButtons && (
-                        <div className="flex justify-end items-center">
+                        <div className="flex items-center justify-end">
                         <Button className={"ml-2 py-2 px-3"} onClick={() => onEditItem(id)}>
                             <FontAwesomeIcon icon={faEdit} className={" w-4 h-4"}/>
                         </Button>

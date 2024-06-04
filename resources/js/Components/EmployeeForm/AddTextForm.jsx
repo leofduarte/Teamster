@@ -92,7 +92,7 @@ function AddTextForm({ isModalOpen, setIsModalOpen, currentItem, setCurrentItem,
 
         {currentItem && (
             <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} ariaHideApp={false} appElement={document.getElementById('root')}>
-              <h2 className="text-black text-center text-xl">Configure Input</h2>
+              <h2 className="text-center text-xl text-black">Configure Input</h2>
               {currentItem && (
                   <form onSubmit={handleConfigureItem}>
                     <label className="text-black">
@@ -146,7 +146,7 @@ function AddTextForm({ isModalOpen, setIsModalOpen, currentItem, setCurrentItem,
               )}
 
                     <div className="mt-12">
-                        <h2 className="text-2xl text-black mb-6 text-center">Preview</h2>
+                        <h2 className="mb-6 text-center text-2xl text-black">Preview</h2>
                         {currentItem && currentItem.label && (
                 <Text_CP handleDeleteItem={handleDeleteItem} onEditItem={handleEditItem} item={currentItem} id={currentItem.id} onInputChange={handleInputChange} setNodeRef={() => {}} attributes={{}} listeners={{}} handle={() => {}}
                 />
