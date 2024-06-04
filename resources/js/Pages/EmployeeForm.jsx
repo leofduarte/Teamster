@@ -58,11 +58,11 @@ const EmployeeForm = ({auth, errors, message}) => {
         <>
             <AuthenticatedLayout
                 user={auth.user}
-                header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Employee Form</h2>}
+                header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Employee Form</h2>}
             >
                 <Head title="Employee Form" />
 
-        <div className="flex justify-between mt-8 max-w-7xl min-h-[80vh] mx-auto">
+        <div className="mx-auto mt-8 flex max-w-7xl justify-between min-h-[80vh]">
             <div className={"w-full border-gray-700 border-e"}>
                 {currentItem && (
                     <>
@@ -89,7 +89,7 @@ const EmployeeForm = ({auth, errors, message}) => {
                                 />
                             )}
                             {items.length > 0 && (
-                            <div className="flex justify-end mt-16 mr-6">
+                            <div className="mt-16 mr-6 flex justify-end">
                                 <Button variant={"success"} onClick={handleSubmit}>Submit</Button>
                             </div>
                             )}

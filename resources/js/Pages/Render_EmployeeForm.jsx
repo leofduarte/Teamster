@@ -35,7 +35,7 @@ const Render_EmployeeForm = ({ items: initialItems, auth, id }) => {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Employee Form</h2>}
+            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Employee Form</h2>}
         >
             <Head title="Render Employee Form"/>
 
@@ -92,7 +92,7 @@ const Render_EmployeeForm = ({ items: initialItems, auth, id }) => {
                     );
                 })}
                 {items.length > 0 && (
-                    <div className="flex justify-end mt-8 pb-8">
+                    <div className="mt-8 flex justify-end pb-8">
                         <Button variant={"success"}>Submit</Button>
                     </div>
                 )}

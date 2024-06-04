@@ -9,21 +9,21 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/Comp
 function Checkbox_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, setNodeRef, attributes, listeners, showButtons, showGrab }) {
 
     return (
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
             <div className="flex items-center">
                 {showGrab && (
-                <button className="cursor-grab mr-6">
+                <button className="mr-6 cursor-grab">
                     <FontAwesomeIcon
                         ref={setNodeRef}
                         {...attributes}
                         {...listeners}
-                        className="text-black cursor-grab text-xl"
+                        className="cursor-grab text-xl text-black"
                         icon={faGripVertical}
                     />
                 </button>
                 )}
 
-                <div className="items-center flex space-x-2 w-full">
+                <div className="flex w-full items-center space-x-2">
 
                     <Checkbox
                         onClick={() => {
@@ -32,10 +32,10 @@ function Checkbox_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, se
                         className="checkbox-styles"
                     />
                     <div>
-                        <div className="gap-2 flex items-center">
+                        <div className="flex items-center gap-2">
                             <Label
                                 htmlFor="terms1"
-                                className="text-black text-xl"
+                                className="text-xl text-black"
                             >
                                 {item.label}
                             </Label>
@@ -44,7 +44,7 @@ function Checkbox_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, se
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <FontAwesomeIcon
-                                                className="text-black cursor-pointer"
+                                                className="cursor-pointer text-black"
                                                 icon={faCircleInfo}
                                             />
                                         </TooltipTrigger>
@@ -55,7 +55,7 @@ function Checkbox_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, se
                         </div>
                         <div>
                             {item.description && (
-                                <p className="text-black text-xs text-muted-foreground text-start">
+                                <p className="text-start text-xs text-black text-muted-foreground">
                                     {item.description}
                                 </p>
                             )}

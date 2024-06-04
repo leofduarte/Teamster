@@ -15,23 +15,23 @@ function Radio_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, setNo
 
     return (
     <div className="flex items-center justify-between">
-        <div className="flex items-center justify-between w-full">
+        <div className="flex w-full items-center justify-between">
             {showGrab && (
-                <button className="cursor-grab mr-6">
+                <button className="mr-6 cursor-grab">
                     <FontAwesomeIcon
                         ref={setNodeRef}
                         {...attributes}
                         {...listeners}
-                        className="text-black cursor-grab text-xl"
+                        className="cursor-grab text-xl text-black"
                         icon={faGripVertical}
                     />
                 </button>
             )}
 
-            <div className="flex justify-between items-center w-full">
-                <div className="flex-grow flex items-center">
+            <div className="flex w-full items-center justify-between">
+                <div className="flex flex-grow items-center">
                     <div className="flex-col">
-                        <Label className="text-black text-xl">{item.label}</Label>
+                        <Label className="text-xl text-black">{item.label}</Label>
 
                         <RadioGroup defaultValue="option-one" className="text-black"
                             onClick={(event) => handleOptionChange(event.target.value)}

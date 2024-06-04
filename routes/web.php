@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ExtractEmailController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -39,11 +39,18 @@ Route::get('/activityplanning', function(){
     return Inertia::render('ActivityPlanning');
 })->middleware('auth')->name('activityplanning');
 
+Route::get('/extractemails', function(){
+    return Inertia::render('ExtractEmails');
+})->middleware('auth')->name('extractemails');
+
+Route::get('/invite', function(){
+    return Inertia::render('InviteForm');
+})->middleware('auth')->name('inviteform');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
 
 require __DIR__.'/auth.php';

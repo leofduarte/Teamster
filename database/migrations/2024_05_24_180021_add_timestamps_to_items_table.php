@@ -11,8 +11,22 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasColumn('items', 'created_at')) {
+            Schema::table('items', function (Blueprint $table) {
+                $table->dropColumn('created_at');
+            });
+        }
+
+        if (Schema::hasColumn('items', 'updated_at')) {
+            Schema::table('items', function (Blueprint $table) {
+                $table->dropColumn('updated_at');
+            });
+        }
+
+        // Now you can add the columns
         Schema::table('items', function (Blueprint $table) {
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

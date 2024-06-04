@@ -1,109 +1,111 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { Button } from "../Components/ui/button";
+import React, {useState} from "react";
+import {Button} from "../Components/ui/button";
 import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-  } from "@/Components/ui/alert-dialog.jsx";
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog.jsx";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import {Head} from "@inertiajs/react";
 
+function ActivityPlanningForm({auth}) {
+    // const [hobbies, setHobbies] = useState([]);
+    // const [likes, setLikes] = useState([]);
+    // const [idades, setIdades] = useState([]);
+    // const [restricoes, setRestricoes] = useState([]);
+    // const [idadeInput, setIdadeInput] = useState(0);
+    // const [hobbyInput, setHobbyInput] = useState('');
+    // const [likeInput, setLikeInput] = useState('');
+    // const [restricoesInput, setRestricoesInput] = useState('');
 
-function ActivityPlanningForm(auth, errors, message) {
-  // const [hobbies, setHobbies] = useState([]);
-  // const [likes, setLikes] = useState([]);
-  // const [idades, setIdades] = useState([]);
-  // const [restricoes, setRestricoes] = useState([]);
-  // const [idadeInput, setIdadeInput] = useState(0);
-  // const [hobbyInput, setHobbyInput] = useState('');
-  // const [likeInput, setLikeInput] = useState('');
-  // const [restricoesInput, setRestricoesInput] = useState('');
+    // infos que o organizador / admin preenche
+    const cidade = "Aveiro";
+    const objetivo = "fomentar a comunicação, união, espirito de equipa e motivação";
+    const tipologia = "equipa de contabilidade";
+    const numparticipantes = 14;
+    const duracao = "max 8 horas";
+    const orcamento = 50;
+    const idades = [20, 30, 40, 50];
+    const hobbies = ["tenis", "música", "atividades ao ar livre", "leitura"];
+    const likes = ["fotografia", "jogos de tabuleiro", "boxe", "xadrez"];
+    const restricoes = ["alergias a frutos secos", "alergias a glúten"];
+    const [prompt, setPrompt] = useState("");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // infos que o organizador / admin preenche
-  const cidade = "Aveiro";
-  const objetivo = "fomentar a comunicação, união, espirito de equipa e motivação";
-  const tipologia = "equipa de contabilidade";
-  const numparticipantes = 14;
-  const duracao = "max 8 horas";
-  const orcamento = 50;
-  const idades = [20, 30, 40, 50];
-  const hobbies = ["tenis", "música", "atividades ao ar livre", "leitura"];
-  const likes = ["fotografia", "jogos de tabuleiro", "boxe", "xadrez"];
-  const restricoes = ["alergias a frutos secos", "alergias a glúten"];
-  const [prompt, setPrompt] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const data = {
+        objetivo: objetivo,
+        tipologia: tipologia,
+        numparticipantes: numparticipantes,
+        duracao: duracao,
+        orcamento: orcamento,
+        hobbies: hobbies,
+        likes: likes,
+        cidade: cidade,
+        idades: idades,
+        restricoes: restricoes,
+    };
 
-  const data = {
-    objetivo: objetivo,
-    tipologia: tipologia,
-    numparticipantes: numparticipantes,
-    duracao: duracao,
-    orcamento: orcamento,
-    hobbies: hobbies,
-    likes: likes,
-    cidade: cidade,
-    idades: idades,
-    restricoes: restricoes,
-  };
+    const handleAction = () => {
+        console.log("action");
+        setIsDialogOpen(true);
+    };
 
-  const handleAction = () => {
-	console.log("action");
-	setIsDialogOpen(true);
-  };
+    const handleConfirm = async () => {
+        console.log("confirm")
+        setIsDialogOpen(false);
 
-  const handleConfirm =  async () => {
-	console.log("confirm")
-	setIsDialogOpen(false);
+        console.log(data);
+        try {
+            const response = await axios.post(
+                "/api/v1/activity-planning",
+                data
+            );
+            console.log(response);
+            setPrompt(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
-	try {
-        const response = await axios.post(
-          "http://localhost:3000/api-v1/activity-planning",
-          data
-        );
-        console.log(response.data.content[0].text);
-        setPrompt(response.data.content[0].text);
-      } catch (error) {
-        console.error(error);
-      }
-  };
-
-  const handleCancel = () => {
-	console.log("cancel");
-	setIsDialogOpen(false);
-  };
+    const handleCancel = () => {
+        console.log("cancel");
+        setIsDialogOpen(false);
+    };
 
     // setLikes([...likes, likeInput]);
     // setHobbies([...hobbies, hobbyInput]);
     // setIdades([...idades, idadeInput]);
     // setRestricoes([...restricoes, restricoesInput]);
 
-  return (
-    <>
+    return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Activity Planning</h2>}
+            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Activity Planning</h2>}
         >
-            <Head title="Activity Planning" />
+            <Head title="Activity Planning"/>
 
-      <div className="text-black">
-        <h1 className="text-2xl">Planeamento de Atividades</h1>
-        <p>
-          Esta página serve para planear as atividade, por parte do gestor/ recursos humanos/ etc
-        </p>
+            <div className="py-12">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                        <div className="p-6 text-gray-900">
+                            <h1 className="text-2xl">Planeamento de Atividades</h1>
+                            <p>
+                                Esta página serve para planear as atividade, por parte do gestor/ recursos humanos/ etc
+                            </p>
 
-        {/* <input className="block m-2 p-2" type="number" placeholder="Idade" value={idadeInput} onChange={e => setIdadeInput(e.target.value)}/> */}
-        {/* <input className="block m-2 p-2" type="text" placeholder="Interesses" value={likeInput} onChange={e => setLikeInput(e.target.value)} />
-		<input className="block m-2 p-2" type="text" placeholder="Passatempos" value={hobbyInput} onChange={e => setHobbyInput(e.target.value)} />
-		<input className="block m-2 p-2" type="text" placeholder="Restrições" value={restricoesInput} onChange={e => setRestricoesInput(e.target.value)} /> */}
+                            {/*<div>
+        <input className="m-2 block p-2" type="number" placeholder="Idade" value={idadeInput} onChange={e => setIdadeInput(e.target.value)}/>
+                 <input className="m-2 block p-2" type="text" placeholder="Interesses" value={likeInput} onChange={e => setLikeInput(e.target.value)} />
+		<input className="m-2 block p-2" type="text" placeholder="Passatempos" value={hobbyInput} onChange={e => setHobbyInput(e.target.value)} />
+		<input className="m-2 block p-2" type="text" placeholder="Restrições" value={restricoesInput} onChange={e => setRestricoesInput(e.target.value)} />
 
-        {/* <h2 className="text-2xl text-black">Idades:</h2>
+               <h2 className="text-2xl text-black">Idades:</h2>
 		<ul>
 			{idades.map((hobby, index) => (
 				<li key={index}>{hobby}</li>
@@ -130,30 +132,33 @@ function ActivityPlanningForm(auth, errors, message) {
 				<li key={index}>{like}</li>
 			))}
 		</ul>
-		*/}
+                </div>
+                	*/}
 
+                            <AlertDialog isOpen={isDialogOpen}>
+                                <AlertDialogTrigger asChild><Button onClick={handleAction}>Add
+                                    Activity</Button></AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader className={"text-black"}>
+                                        <AlertDialogTitle>Confirm addition</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            Do you want to add this activity?
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={handleConfirm}>Confirm</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
 
-<AlertDialog isOpen={isDialogOpen}>
-  <AlertDialogTrigger asChild><Button onClick={handleAction}>Add Activity</Button></AlertDialogTrigger>
-  <AlertDialogContent>
-    <AlertDialogHeader className={"text-black"}>
-      <AlertDialogTitle>Confirm addition</AlertDialogTitle>
-      <AlertDialogDescription>
-       Do you want to add this activity?
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogFooter>
-      <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
-      <AlertDialogAction onClick={handleConfirm}>Confirm</AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
-
-{prompt && <pre className="text-black">{prompt}</pre>}
-      </div>
-    </AuthenticatedLayout>
-    </>
-  );
+                            {prompt && <pre className="text-black">{prompt}</pre>}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </AuthenticatedLayout>
+    );
 }
 
 export default ActivityPlanningForm;
