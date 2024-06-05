@@ -20,17 +20,6 @@ export default function Authenticated({ user, header, children }) {
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800"/>
                                 </Link>
                             </div>
-
-                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
-                                    Dashboard
-                                </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
-                                <NavLink href={route('about')} active={route().current('about')}>
-                                    About
-                                </NavLink>
-                            </div>
                             <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
                                 <NavLink href={route('employeeform')} active={route().current('employeeform')}>
                                     Employee Form
