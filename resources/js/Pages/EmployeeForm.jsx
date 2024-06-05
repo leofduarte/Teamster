@@ -1,22 +1,25 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import ModalButtons from "@/Components/EmployeeForm/ModalButtons.jsx";
 import AddTextForm from "@/Components/EmployeeForm/AddTextForm.jsx";
 import AddCheckboxForm from "@/Components/EmployeeForm/AddCheckboxForm.jsx";
 import AddRadioForm from "@/Components/EmployeeForm/AddRadioForm.jsx";
-import {Head, router} from "@inertiajs/react";
+import {Head} from "@inertiajs/react";
 import AuthenticatedLayout from "../Layouts/AuthenticatedLayout.jsx";
 import {Button} from "../Components/ui/button.jsx";
+import {toast} from "@/Components/ui/use-toast.js";
+import axios from "axios";
 
 const EmployeeForm = ({auth, errors, message}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
     const [items, setItems] = useState([]);
 
+
     const handleInputChange = (id, newValue) => {
         setItems((prevItems) => {
             return prevItems.map((item) => {
                 if (item.id === id) {
-                    return { ...item, value: newValue };
+                    return {...item, value: newValue};
                 } else {
                     return item;
                 }
@@ -46,67 +49,95 @@ const EmployeeForm = ({auth, errors, message}) => {
         setCurrentItem(updatedItem);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(items)
-        router.post('/items', {
-            items: items,
-        })
+
+        try {
+            const response = await axios.post('/api/v1/items', {
+                items: items,
+            })
+            console.log(response);
+
+            toast({
+                variant: "success",
+                title: "Success!",
+                description: `${response.data.message}`,
+            });
+        } catch (error) {
+            console.error(error);
+            toast({
+                variant: "desctructive",
+                title: "Error!",
+                description: `${error.response.data.message}`,
+            });
+        }
     };
 
     return (
-        <>
+        <div>
             <AuthenticatedLayout
                 user={auth.user}
                 header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Employee Form</h2>}
             >
                 <Head title="Employee Form" />
 
-        <div className="mx-auto mt-8 flex max-w-7xl justify-between min-h-[80vh]">
-            <div className={"w-full border-gray-700 border-e"}>
-                {currentItem && (
-                    <>
-                        <form onSubmit={handleSubmit}>
-                            {currentItem.type === 'text' && (
-                                <AddTextForm isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-                                             currentItem={currentItem} setCurrentItem={setCurrentItem}
-                                             handleUpdateItem={handleUpdateItem} items={items} setItems={setItems}
-                                             handleDeleteItem={handleDeleteItem} showButtons={false}
-                                />
-                            )}
-                            {currentItem.type === 'checkbox' && (
-                                <AddCheckboxForm isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-                                                 currentItem={currentItem} setCurrentItem={setCurrentItem}
-                                                 handleUpdateItem={handleUpdateItem} items={items} setItems={setItems}
-                                                 handleDeleteItem={handleDeleteItem} handleInputChange={handleInputChange} showButtons={false}
-                                />
-                            )}
-                            {currentItem.type === 'radio' && (
-                                <AddRadioForm isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-                                              currentItem={currentItem} setCurrentItem={setCurrentItem}
-                                              handleUpdateItem={handleUpdateItem} items={items} setItems={setItems}
-                                              handleDeleteItem={handleDeleteItem} showButtons={false}
-                                />
-                            )}
-                            {items.length > 0 && (
-                            <div className="mt-16 mr-6 flex justify-end">
-                                <Button variant={"success"} onClick={handleSubmit}>Submit</Button>
+                <div className="py-12 ">
+                    <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                            <div className="p-6 text-gray-900 flex justify-end items-center">
+                                {currentItem ? (
+                                    <>
+                                        <form onSubmit={handleSubmit} className={"flex-grow"}>
+                                            {currentItem.type === 'text' && (
+                                                <AddTextForm isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+                                                             currentItem={currentItem} setCurrentItem={setCurrentItem}
+                                                             handleUpdateItem={handleUpdateItem} items={items}
+                                                             setItems={setItems}
+                                                             handleDeleteItem={handleDeleteItem} showButtons={false}
+                                                />
+                                            )}
+                                            {currentItem.type === 'checkbox' && (
+                                                <AddCheckboxForm isModalOpen={isModalOpen}
+                                                                 setIsModalOpen={setIsModalOpen}
+                                                                 currentItem={currentItem}
+                                                                 setCurrentItem={setCurrentItem}
+                                                                 handleUpdateItem={handleUpdateItem} items={items}
+                                                                 setItems={setItems}
+                                                                 handleDeleteItem={handleDeleteItem}
+                                                                 handleInputChange={handleInputChange}
+                                                                 showButtons={false}
+                                                />
+                                            )}
+                                            {currentItem.type === 'radio' && (
+                                                <AddRadioForm isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+                                                              currentItem={currentItem} setCurrentItem={setCurrentItem}
+                                                              handleUpdateItem={handleUpdateItem} items={items}
+                                                              setItems={setItems}
+                                                              handleDeleteItem={handleDeleteItem} showButtons={false}
+                                                />
+                                            )}
+                                        </form>
+                                    </>
+                                ) : (
+                                    <div className="flex-grow">
+                                    <p className="text-gray-500">Click on the buttons at the end to add items to the form</p>
+                                    </div>
+                                    )}
+                                <div className={"border-l border-black"}>
+                                <ModalButtons handleAddItem={handleAddItem}/>
+                                </div>
                             </div>
-                            )}
-                        </form>
-                    </>
-                )}
-
-                {message && (
-                <p>{message}</p>
-                )}
-
-            </div>
-            <ModalButtons handleAddItem={handleAddItem}/>
-        </div>
+                        </div>
+                        {items.length > 0 && (
+                            <div className="mt-16 mr-6 flex justify-end">
+                                <Button variant={""} onClick={handleSubmit}>Submit</Button>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </AuthenticatedLayout>
-            </>
-
+        </div>
     );
 }
 

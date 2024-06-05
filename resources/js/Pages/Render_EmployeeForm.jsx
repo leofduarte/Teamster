@@ -40,8 +40,6 @@ const Render_EmployeeForm = ({ items: initialItems, auth, id }) => {
             <Head title="Render Employee Form"/>
 
             <div className={"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"}>
-
-
                 {parsedItems && parsedItems.map(item => {
                     return (
                         <div key={item.id} className="">
@@ -93,7 +91,7 @@ const Render_EmployeeForm = ({ items: initialItems, auth, id }) => {
                 })}
                 {items.length > 0 && (
                     <div className="mt-8 flex justify-end pb-8">
-                        <Button variant={"success"}>Submit</Button>
+                        <Button >Submit</Button>
                     </div>
                 )}
             </div>

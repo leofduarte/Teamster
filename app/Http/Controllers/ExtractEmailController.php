@@ -8,34 +8,32 @@ use Illuminate\Support\Facades\Validator;
 
 class ExtractEmailController extends Controller
 {
-    public function validateEmails(Request $request)
-    {
-        $emails = $request->input('emails');
-        $removeDuplicates = $request->input('removeDuplicates');
+public function validateEmails(Request $request)
+{
+    $emails = $request->input('emails');
+    $removeDuplicates = $request->input('removeDuplicates');
 
-        $validator = Validator::make($emails, [
-            '*.email' => 'required|email',
-        ]);
+    $validator = Validator::make($emails, [
+        '*.email' => 'required|email',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json(['message' => "Invalid emails detected in your list."], 400);
-        }
-
-        $uniqueEmails = array_unique(array_column($emails, 'email'));
-        if (count($uniqueEmails) < count($emails)) {
-            if ($removeDuplicates) {
-                $emails = array_filter($emails, function($email) use ($uniqueEmails) {
-                    return in_array($email['email'], $uniqueEmails);
-                });
-
-                return response()->json(['message' => 'Email validation successful. Duplicates removed.', 'emails' => array_values($emails)], 200);
-            } else {
-                return response()->json(['message' => "Duplicate emails detected in your list. No action taken."], 400);
-            }
-        }
-
-        return response()->json(['message' => 'Email validation successful. No duplicates found.', 'emails' => $emails], 200);
+    if ($validator->fails()) {
+        return response()->json(['message' => "Invalid emails detected in your list."], 400);
     }
+
+    $uniqueEmails = array_unique(array_column($emails, 'email'));
+    if (count($uniqueEmails) < count($emails)) {
+        if ($removeDuplicates) {
+            $emails = array_intersect_key($emails, $uniqueEmails);
+
+            return response()->json(['message' => 'Email validation successful. Duplicates removed.', 'emails' => array_values($emails)], 200);
+        } else {
+            return response()->json(['message' => "Duplicate emails detected in your list. No action taken."], 400);
+        }
+    }
+
+    return response()->json(['message' => 'Email validation successful. No duplicates found.', 'emails' => $emails], 200);
+}
 
 
 

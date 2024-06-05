@@ -52,6 +52,11 @@ export default function Authenticated({ user, header, children }) {
                                     Extract Emails
                                 </NavLink>
                             </div>
+                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
+                                <NavLink href={route('inviteform')} active={route().current('inviteform')}>
+                                    Invite
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">

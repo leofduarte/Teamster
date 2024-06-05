@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ExtractEmailController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,7 +34,6 @@ Route::get('/employeeform' , function(){
 Route::get('/render_employeeform', [ItemController::class, 'index'])
     ->middleware('auth')->name('render_employeeform');
 
-Route::post('/items', [ItemController::class, 'store']);
 
 Route::get('/activityplanning', function(){
     return Inertia::render('ActivityPlanning');
@@ -46,6 +46,10 @@ Route::get('/extractemails', function(){
 Route::get('/invite', function(){
     return Inertia::render('InviteForm');
 })->middleware('auth')->name('inviteform');
+
+Route::get('/payment', function(){
+    return Inertia::render('PaymentForm');
+})->middleware('auth')->name('payment');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

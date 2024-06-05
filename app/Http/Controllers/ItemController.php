@@ -70,7 +70,7 @@ class ItemController
             $item->save();
         }
 
-        return Inertia::render('EmployeeForm', [
+        return response()->json([
             'message' => 'Items saved successfully',
         ]);
     }
