@@ -131,7 +131,7 @@ const EmployeeForm = ({auth, errors, message}) => {
                         </div>
                         {items.length > 0 && (
                             <div className="mt-16 mr-6 flex justify-end">
-                                <Button variant={""} onClick={handleSubmit}>Submit</Button>
+                                <Button onClick={handleSubmit}>Submit</Button>
                             </div>
                         )}
                     </div>

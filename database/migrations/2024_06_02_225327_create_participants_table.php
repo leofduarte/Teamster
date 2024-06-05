@@ -4,29 +4,38 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateParticipantsTable extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('participants', function (Blueprint $table) {
-            $table->id();
-            $table->string('email')->unique();
-            $table->string('name')->default('Anonymous');
-            $table->string('phone')->nullable();
-            $table->foreignId('email_verified_at')->nullable();
-            $table->timestamps();
 
+            $table->id();
+            $table->string('email');
+            $table->string('name');
+            $table->string('phone');
+            $table->unsignedBigInteger('ref_team_id');
+            $table->unsignedBigInteger('role_id');
+            $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by');
+            $table->unsignedBigInteger('last_login')->nullable();
+            $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('participants');
     }
-};
+}

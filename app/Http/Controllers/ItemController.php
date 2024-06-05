@@ -16,6 +16,13 @@ class ItemController
             'items' => 'required|array',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
         $validationResults = [];
 
         foreach ($request->items as $key => $value) {
