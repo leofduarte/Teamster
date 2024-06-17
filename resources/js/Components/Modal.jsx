@@ -3,6 +3,7 @@ import { Dialog, Transition } from '@headlessui/react';
 
 export default function Modal({ children, show = false, maxWidth = '2xl', closeable = true, onClose = () => {} }) {
     const close = () => {
+        console.log('close triggered');
         if (closeable) {
             onClose();
         }

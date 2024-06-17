@@ -13,6 +13,10 @@ export default {
     ],
 
     theme: {
+        fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+            serif: ["Manjari", "serif"],
+        },
         container: {
             center: true,
             padding: "2rem",
@@ -60,9 +64,6 @@ export default {
                 lg: `var(--radius)`,
                 md: `calc(var(--radius) - 2px)`,
                 sm: "calc(var(--radius) - 4px)",
-            },
-            fontFamily: {
-                sans: ["Figtree", ...defaultTheme.fontFamily.sans],
             },
             keyframes: {
                 "accordion-down": {

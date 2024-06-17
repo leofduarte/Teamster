@@ -13,8 +13,10 @@ class ApiChatController extends Controller
         $data = $request->all();
 
         $openAIClient = new OpenAIClient();
-        $response = $openAIClient->generateText($data);
+        $response = $openAIClient->generateCheckboxQuestion($data);
 
         return $response;
     }
+
+
 }

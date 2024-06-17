@@ -1,8 +1,11 @@
-@tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&display=swap");
 
-  @layer base {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
     :root {
       --background: 0 0% 100%;
       --foreground: 0 0% 3.9%;

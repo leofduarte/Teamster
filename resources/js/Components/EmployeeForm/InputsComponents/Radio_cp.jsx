@@ -7,13 +7,16 @@ import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 function Radio_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, setNodeRef, attributes, listeners, showButtons, showGrab }) {
     const handleOptionChange = (value) => {
         console.log('Option value:', value);
-        const selectedOption = item.options.find(opt => opt.id === value);
+        const optionsArray = Array.isArray(JSON.parse(item.options)) ? JSON.parse(item.options) : [JSON.parse(item.options)];
+        const selectedOption = optionsArray.find(opt => opt.id === value);
         if (selectedOption) {
-            onInputChange(id, { id: selectedOption.id, label: selectedOption.label });
+            onInputChange(selectedOption.id);
         }
     };
 
     return (
+
+
     <div className="flex items-center justify-between">
         <div className="flex w-full items-center justify-between">
             {showGrab && (
@@ -34,10 +37,10 @@ function Radio_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, setNo
                         <Label className="text-xl text-black">{item.label}</Label>
 
                         <RadioGroup defaultValue="option-one" className="text-black"
-                            onClick={(event) => handleOptionChange(event.target.value)}
+                                    onClick={(event) => handleOptionChange(event.target.value)}
                         >
-                            {item.options.map((option) => (
-                                <div key={option.id} className="flex items-center space-x-2">
+                            {(Array.isArray(JSON.parse(item.options)) ? JSON.parse(item.options) : [JSON.parse(item.options)]).map((option, index) => (
+                                <div key={index} className="flex items-center space-x-2">
                                     <RadioGroupItem value={option.id} id={option.id}/>
                                     <label htmlFor={option.id}>{option.label}</label>
                                 </div>

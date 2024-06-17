@@ -10,6 +10,8 @@ const InviteForm = ({auth}) => {
     const [email, setEmail] = useState('');
     const [teamId, setTeamId] = useState('');
     const [message, setMessage] = useState('');
+    const [questionnaireData, setQuestionnaireData] = useState({});
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,6 +19,7 @@ const InviteForm = ({auth}) => {
         try {
             const response = await axios.post('/api/v1/invite', { email, team_id: teamId });
             setMessage(response.data.message);
+            console.log(response.data);
         } catch (error) {
             setMessage('Error sending invitation.');
         }

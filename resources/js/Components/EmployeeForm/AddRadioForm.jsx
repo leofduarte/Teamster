@@ -108,7 +108,6 @@ const addOption = () => {
       }
     });
 
-    // Reset the states
     setLabel("");
     setOptions([
       { id: "option-1", label: "" },

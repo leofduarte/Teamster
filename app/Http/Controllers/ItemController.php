@@ -89,13 +89,7 @@ class ItemController
             'items' => $items,
         ]);
     }
-
-  /*  public function show($id):
-    {
-        $item = Item::findOrFail($id);
-
-        return Inertia::render('Render_EmployeeForm', [
-            'item' => $item,
-        ]);
-    }*/
 }
+
+
+

@@ -32,18 +32,28 @@ export default function Authenticated({ user, header, children }) {
                                 </NavLink>
                             </div>
                             <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
+                                <NavLink href={route('questionnaire')} active={route().current('questionnaire')}>
+                                    Questionnaire
+                                </NavLink>
+                            </div>
+                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
+                                <NavLink href={route('addresponse')} active={route().current('addresponse')}>
+                                    Add Response
+                                </NavLink>
+                            </div>
+                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
                                 <NavLink href={route('activityplanning')} active={route().current('activityplanning')}>
                                     Activity Planning
                                 </NavLink>
                             </div>
                             <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
-                                <NavLink href={route('extractemails')} active={route().current('extractemails')}>
-                                    Extract Emails
+                                <NavLink href={route('inviteform')} active={route().current('inviteform')}>
+                                    Invite
                                 </NavLink>
                             </div>
                             <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
-                                <NavLink href={route('inviteform')} active={route().current('inviteform')}>
-                                    Invite
+                                <NavLink href={route('teammembers')} active={route().current('teammembers')}>
+                                    Teams/ Members
                                 </NavLink>
                             </div>
                         </div>

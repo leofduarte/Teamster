@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Participant extends Model
 {
-    protected $fillable = ['email', 'name', 'phone', 'team_id', 'role_id', 'status_id'];
+    protected $fillable = ['email', 'name', 'phone', 'role_id'];
 
-    public function team()
+    public function teams()
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsToMany(Team::class)->withPivot('status_id');
     }
 
     public function items()

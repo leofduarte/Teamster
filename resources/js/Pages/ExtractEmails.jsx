@@ -23,8 +23,6 @@ import {
     AlertDialog, AlertDialogAction, AlertDialogCancel
 } from "@/Components/ui/alert-dialog.jsx";
 import { Button } from "@/Components/ui/button"
-import {Toaster} from "@/Components/ui/toaster.jsx";
-import { ToastAction } from "@/Components/ui/toast.jsx"
 import { useToast } from "@/Components/ui/use-toast"
 import axios from 'axios';
 
@@ -59,7 +57,6 @@ function ExtractEmails({auth}) {
             const workbook = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
             setSheetNames(workbook.SheetNames);
 
-            // If the file only has one sheet, select it automatically
             if (workbook.SheetNames.length === 1) {
                 setSheetName(workbook.SheetNames[0]);
             }
@@ -148,7 +145,7 @@ function ExtractEmails({auth}) {
         try {
             const response = await axios.post('/api/v1/validate-emails', {
                 emails: filteredData.map(email => ({email})),
-                removeDuplicates: false, // Initially set to false
+                removeDuplicates: false,
             });
 
             console.log(response.data);
@@ -227,8 +224,7 @@ function ExtractEmails({auth}) {
             toast({
                 variant: "success",
                 title: "Success!",
-                description: `New emails added: ${newEmailsString}. Already existing emails: ${existingEmailsString}`,
-            });
+                description: `New emails added: ${newEmailsString}${existingEmails.length > 0 ? `. Already existing emails: ${existingEmailsString}` : ''}`,            });
 
         } catch (error) {
             console.error(error.response.data);
@@ -288,15 +284,15 @@ function ExtractEmails({auth}) {
                             )}
 
                             {errorMessages.fileUploadError &&
-                                <p className="text-red-500 mt-2">{errorMessages.fileUploadError}</p>}
+                                <p className="text-red-500 text-xs italic">{errorMessages.fileUploadError}</p>}
                             {errorMessages.columnError &&
-                                <p className="text-red-500 mt-2">{errorMessages.columnError}</p>}
+                                <p className="text-red-500 text-xs italic">{errorMessages.columnError}</p>}
                             {errorMessages.minRowError &&
-                                <p className="text-red-500 mt-2">{errorMessages.minRowError}</p>}
+                                <p className="text-red-500 text-xs italic">{errorMessages.minRowError}</p>}
                             {errorMessages.maxRowError &&
-                                <p className="text-red-500 mt-2">{errorMessages.maxRowError}</p>}
+                                <p className="text-red-500 text-xs italic">{errorMessages.maxRowError}</p>}
                             {errorMessages.validateEmailsError &&
-                                <p className="text-red-500 mt-2">{errorMessages.validateEmailsError}</p>}
+                                <p className="text-red-500 text-xs italic">{errorMessages.validateEmailsError}</p>}
 
                             {column !== '' && (
                                 filteredData.length > 0 ? (

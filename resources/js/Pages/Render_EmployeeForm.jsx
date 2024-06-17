@@ -68,7 +68,8 @@ const Render_EmployeeForm = ({ items: initialItems, auth, id }) => {
                                         item={item}
                                         options={item.options}
                                         showButtons={false}
-                                        onInputChange={(isChecked) => handleInputChange(item.id, isChecked ? "1" : "0")}/>
+                                        onInputChange={(isChecked) => handleInputChange(item.id, isChecked ? "1" : "0")}
+                                    />
                                 </div>
                             )}
                             {item.type === 'radio' && (
