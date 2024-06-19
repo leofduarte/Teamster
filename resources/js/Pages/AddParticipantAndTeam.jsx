@@ -35,7 +35,7 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants}) => {
         }
     };
 
-    const handleAddTeamAndParticipant = (event) => {
+    const handleAddTeamAndParticipant = async (event) => {
         event.preventDefault();
 
         const teamFormData = new FormData(document.getElementById('teamForm'));
@@ -46,44 +46,49 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants}) => {
 
         console.log('Participant data:', participantData);
 
-        axios.post(`/api/v1/addteam`, teamData)
-            .then(response => {
-                toast({
-                    variant: "success",
-                    title: "Success!",
-                    description: `${teamData.name} has been added to the teams.`,
-                });
+        try {
+            const teamResponse = await axios.post(`/api/v1/addteam`, teamData);
+            toast({
+                variant: "success",
+                title: "Success!",
+                description: `${teamData.name} has been added to the teams.`,
+            });
 
-                setTeamName('');
-                setError(null);
+            setTeamName('');
+            setError(null);
 
-                const newTeamId = response.data.teamId;
+            const newTeamId = teamResponse.data.teamId;
 
-                return axios.post(`/api/v1/teams/${newTeamId}/addmultipleparticipants`, participantData);
-            })
-            .then(response => {
-                console.log('Participant addition response:', response);
+            const participantResponse = await axios.post(`/api/v1/teams/${newTeamId}/addmultipleparticipants`, participantData);
+            console.log('Participant addition response:', participantResponse);
 
-                toast({
-                    variant: "success",
-                    title: "Success!",
-                    description: `${participantData.email} has been added to the team.`,
-                });
+            toast({
+                variant: "success",
+                title: "Success!",
+                description: `Participants have been added to the team.`,
+            });
 
-                fetchTeamsAndParticipants();
-                setParticipantEmail('');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                toast({
-                    variant: "destructive",
-                    title: "Error!",
-                    description: `An error occurred. ${error.response.data.message}`,
-                });
-            })
-            .finally(() => {
-                onClose();
-            })
+            fetchTeamsAndParticipants();
+            setParticipantEmail('');
+
+            for (const emailObj of participantEmails) {
+                try {
+                    const inviteResponse = await axios.post('/api/v1/invite', { email: emailObj.email, team_id: newTeamId });
+                    console.log(inviteResponse.data);
+                } catch (inviteError) {
+                    console.error('Error inviting participant:', inviteError);
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            toast({
+                variant: "destructive",
+                title: "Error!",
+                description: `An error occurred. ${error.response?.data?.message || error.message}`,
+            });
+        } finally {
+            onClose();
+        }
     };
 
     return (
@@ -103,8 +108,7 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants}) => {
                                     />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p className="text-sm">Enter the name of your Team. Example: <strong>Marketing
-                                        Team</strong></p>
+                                    <p className="text-sm">Enter the name of your Team. Example: <strong>Marketing Team</strong></p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
@@ -123,17 +127,17 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants}) => {
                 </div>
             </form>
 
-                <Select>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a Department"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>Departments</SelectLabel>
-                            <SelectItem value="apple">Apple</SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+            <Select>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select a Department"/>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectLabel>Departments</SelectLabel>
+                        <SelectItem value="apple">Apple</SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
 
             <form id="participantForm" onSubmit={handleAddTeamAndParticipant}>
                 <div className={"flex flex-col"}>
@@ -150,8 +154,7 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants}) => {
                                     />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p className="text-sm">Enter the emails of the participants you want to add to the
-                                        team.</p>
+                                    <p className="text-sm">Enter the emails of the participants you want to add to the team.</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
@@ -184,7 +187,6 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants}) => {
                             <GetEmailExcel2_CP setEmails={setParticipantEmails}/>
                         </div>
                     )}
-
 
                     <div className="flex flex-row flex-wrap">
                         {participantEmails.map((emailObj, index) => (

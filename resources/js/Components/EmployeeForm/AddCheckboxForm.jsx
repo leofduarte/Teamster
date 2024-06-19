@@ -9,6 +9,7 @@ import {Button} from "../../Components/ui/button.jsx";
 import Checkbox_CP from "@/Components/EmployeeForm/InputsComponents/Checkbox_cp.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
+import { Separator } from "@/Components/ui/separator"
 
 const AddCheckboxForm = ({
                              isModalOpen,
@@ -32,6 +33,10 @@ const AddCheckboxForm = ({
                 askAPI: askAPI,
             });
             console.log(response.data);
+            setCurrentItem({...currentItem, tooltip: response.data.tooltip, description: response.data.description, label: response.data.label});
+            setCurrentItem.description = response.data.description;
+            setCurrentItem.label = response.data.label;
+            setCurrentItem.tooltip = response.data.tooltip;
         setResponseAPI(response.data);
     };
 
@@ -93,6 +98,10 @@ const AddCheckboxForm = ({
         console.log(items)
     }, [items]);
 
+    useEffect(() => {
+        console.log(currentItem)
+    }, [currentItem]);
+
     return (
         <div>
             <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
@@ -110,18 +119,25 @@ const AddCheckboxForm = ({
                 onRequestClose={() => setIsModalOpen(false)}
                 appElement={document.getElementById('root')}
             >
+                <h2 className="text-center text-xl text-black">Configure Input</h2>
 
-
-                <button onClick={() => (setShowInput(true))}>
+                <div className={""}>
+                <Button onClick={() => setShowInput(prevShowInput => !prevShowInput)} className={"mb-2"} variant={"generate"}>
                     <FontAwesomeIcon icon={faWandMagicSparkles}/>
-                </button>
+                    <span className={"ms-2"}>Generate</span>
+                </Button>
 
                 {showInput && (
-                    <div>
-                        <Input type={"text"} name={"askAPI"} id={"askAPI"} value={askAPI} onChange={(e) => { setAskAPI(e.target.value) }}/>
-                        <button onClick={handleSubmitAPI}>ask</button>
+                    <div className={"flex"}>
+                        <Input type={"text"} name={"askAPI"} id={"askAPI"} placeholder={"Enter a description of the question you need, and our AI will help you!"} value={askAPI} onChange={(e) => {
+                            setAskAPI(e.target.value)
+                        }}/>
+                        <Button variant={"outline"} onClick={handleSubmitAPI}>ask</Button>
                     </div>)
                 }
+                </div>
+
+                <Separator className={"my-8"} />
 
                 <form onSubmit={handleSubmit}>
                     <label className={"text-black"}>
@@ -179,15 +195,6 @@ const AddCheckboxForm = ({
                             }}
                         />
                     )}
-
-                    {responseAPI && (
-                        <div>
-                            <p>Label: {responseAPI.label}</p>
-                            <p>Tooltip: {responseAPI.tooltip}</p>
-                            <p>Description: {responseAPI.description}</p>
-                        </div>
-                    )}
-
                 </div>
             </Modal>
         </div>

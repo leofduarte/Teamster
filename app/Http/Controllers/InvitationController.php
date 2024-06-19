@@ -54,19 +54,6 @@ class InvitationController extends Controller
     {
         $invitation = Invitation::where('token', $token)->firstOrFail();
 
-        $participant = Participant::create([
-            'email' => $invitation->email,
-        ]);
-
-        $status_id = $request->status_id ?? 3;
-
-        if ($participant) {
-            $participant->teams()->attach($invitation->team_id, ['status_id' => $status_id]);
-            \Log::info('Participant created: ', ['participant' => $participant->toArray()]);
-        } else {
-            \Log::error('Failed to create participant');
-        }
-
         $invitation->delete();
 
         return response()->json(['message' => 'You have successfully joined the team.']);

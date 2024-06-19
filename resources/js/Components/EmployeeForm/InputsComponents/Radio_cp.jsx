@@ -3,20 +3,47 @@ import {faGripVertical, faTrash, faEdit, faCircleInfo} from "@fortawesome/free-s
 import { Button } from "@/Components/ui/button.jsx";
 import { Label } from "@/Components/ui/label.jsx";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
+import {useEffect} from "react";
 
 function Radio_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, setNodeRef, attributes, listeners, showButtons, showGrab }) {
+
     const handleOptionChange = (value) => {
         console.log('Option value:', value);
-        const optionsArray = Array.isArray(JSON.parse(item.options)) ? JSON.parse(item.options) : [JSON.parse(item.options)];
+        let optionsArray;
+        if (typeof item.options === 'object') {
+            optionsArray = [item.options];
+        } else {
+            optionsArray = Array.isArray(JSON.parse(item.options)) ? JSON.parse(item.options) : [JSON.parse(item.options)];
+        }
         const selectedOption = optionsArray.find(opt => opt.id === value);
         if (selectedOption) {
             onInputChange(selectedOption.id);
         }
     };
 
+
+    let optionsArray;
+    if (Array.isArray(item.options)) {
+        optionsArray = item.options;
+    } else if (typeof item.options === 'object') {
+        optionsArray = Object.keys(item.options).map(key => ({id: key, ...item.options[key]}));
+    } else {
+        try {
+            optionsArray = JSON.parse(item.options);
+            if (!Array.isArray(optionsArray)) {
+                optionsArray = [optionsArray];
+            }
+        } catch (e) {
+            console.error('Error parsing item.options:', e);
+            optionsArray = [];
+        }
+    }
+
+    useEffect(() => {
+        console.log('Item:', item);
+    }, [item]);
+
     return (
-
-
     <div className="flex items-center justify-between">
         <div className="flex w-full items-center justify-between">
             {showGrab && (
@@ -39,10 +66,10 @@ function Radio_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, setNo
                         <RadioGroup defaultValue="option-one" className="text-black"
                                     onClick={(event) => handleOptionChange(event.target.value)}
                         >
-                            {(Array.isArray(JSON.parse(item.options)) ? JSON.parse(item.options) : [JSON.parse(item.options)]).map((option, index) => (
-                                <div key={index} className="flex items-center space-x-2">
-                                    <RadioGroupItem value={option.id} id={option.id}/>
-                                    <label htmlFor={option.id}>{option.label}</label>
+                            {optionsArray.map((option, index) => (
+                                <div key={index}>
+                                    <RadioGroupItem value={option.id} id={option.id} className={"align-middle"}/>
+                                    <label htmlFor={option.id} className={"ms-2 align-middle text-sm"}>{option.label}</label>
                                 </div>
                             ))}
                         </RadioGroup>

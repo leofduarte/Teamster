@@ -14,10 +14,11 @@ import SortItem from "./SortItem.jsx";
 import Modal from "react-modal";
 import { Button } from "../../Components/ui/button.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import {faTrashCan, faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
 import { Input } from "../../Components/ui/input";
 import { RadioGroup, RadioGroupItem } from "../../Components/ui/radio-group";
 import Radio_CP from "@/Components/EmployeeForm/InputsComponents/Radio_cp.jsx";
+import {Separator} from "@/Components/ui/separator.jsx";
 
 function AddRadioForm({
   isModalOpen,
@@ -36,6 +37,31 @@ function AddRadioForm({
   ]);
   const [label, setLabel] = useState("");
     const [selectedValue, setSelectedValue] = useState(null);
+    const [showInput, setShowInput] = useState(false);
+    const [askAPI, setAskAPI] = useState("");
+    const [responseAPI, setResponseAPI] = useState("");
+
+
+    const handleSubmitAPI = async (event) => {
+        event.preventDefault();
+
+        const response = await axios.post('/api/v1/radio', {
+            askAPI: askAPI,
+        });
+        console.log(response.data);
+        const mappedOptions = response.data.options.map((option, index) => ({
+            id: `option-${index + 1}`,
+            label: option,
+        }));
+
+        setCurrentItem({
+            ...currentItem,
+            label: response.data.label,
+            options: mappedOptions,
+        });
+
+        setResponseAPI(response.data);
+    };
 
 const addOption = () => {
   event.preventDefault();
@@ -137,6 +163,10 @@ const addOption = () => {
 
   const sensors = useSensors(pointerSensor);
 
+    useEffect(() => {
+        console.log('Items:', currentItem);
+    }, [currentItem]);
+
 
   return (
     <div>
@@ -170,6 +200,27 @@ const addOption = () => {
               appElement={document.getElementById("root")}
           >
               <h2 className="text-center text-xl text-black">Configure Input</h2>
+
+
+              <div className={""}>
+                  <Button onClick={() => setShowInput(prevShowInput => !prevShowInput)} className={"mb-2"}
+                          variant={"generate"}>
+                      <FontAwesomeIcon icon={faWandMagicSparkles}/>
+                      <span className={"ms-2"}>Generate</span>
+                  </Button>
+
+                  {showInput && (
+                      <div className={"flex"}>
+                          <Input type={"text"} name={"askAPI"} id={"askAPI"} placeholder={"Enter a description of the question you need, and our AI will help you!"} value={askAPI} onChange={(e) => {
+                              setAskAPI(e.target.value)
+                          }}/>
+                          <Button variant={"outline"} onClick={handleSubmitAPI}>ask</Button>
+                      </div>)
+                  }
+              </div>
+
+              <Separator className={"my-8"}/>
+
               {currentItem && (
                   <form onSubmit={handleConfigureItem}>
                       <RadioGroup defaultValue="option-one" className="text-black">
@@ -212,28 +263,33 @@ const addOption = () => {
                   {currentItem && label && (
                       <Radio_CP
                           item={{label, options}}
-                          onInputChange={() => {}}
-                          onEditItem={() => {}}
-                          handleDeleteItem={() => {}}
+                          onInputChange={() => {
+                          }}
+                          onEditItem={() => {
+                          }}
+                          handleDeleteItem={() => {
+                          }}
                           id={currentItem.id}
-                          setNodeRef={() => {}}
+                          setNodeRef={() => {
+                          }}
                           attributes={{}}
                           listeners={{}}
-                          handle={() => {}}
+                          handle={() => {
+                          }}
                           showButtons={false}
                           setSelectedValue={setSelectedValue}
                       />
                   )}
               </div>
-                  <div className="flex justify-end">
-                      <Button
-                          onClick={handleConfigureItem}
-                          variant="default"
-                          type="submit"
-                      >
-                          Save
-                      </Button>
-                  </div>
+              <div className="flex justify-end">
+                  <Button
+                      onClick={handleConfigureItem}
+                      variant="default"
+                      type="submit"
+                  >
+                      Save
+                  </Button>
+              </div>
           </Modal>
       )}
     </div>

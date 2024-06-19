@@ -20,7 +20,9 @@ export default function Authenticated({ user, header, children }) {
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800"/>
                                 </Link>
                             </div>
-                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
+
+
+                            {/*<div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
                                 <NavLink href={route('employeeform')} active={route().current('employeeform')}>
                                     Employee Form
                                 </NavLink>
@@ -30,7 +32,8 @@ export default function Authenticated({ user, header, children }) {
                                          active={route().current('render_employeeform')}>
                                     Render Employee Form
                                 </NavLink>
-                            </div>
+                            </div>*/}
+
                             <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
                                 <NavLink href={route('questionnaire')} active={route().current('questionnaire')}>
                                     Questionnaire

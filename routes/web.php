@@ -1,9 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\ParticipantAuth\ParticipantAuthController;
 use App\Http\Controllers\InvitationController;
-use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\QuestionAndResponseController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,12 +27,12 @@ Route::get('/about', function () {
     ]);
 })->name('about');
 
-Route::get('/employeeform' , function(){
+/*Route::get('/employeeform' , function(){
     return Inertia::render('EmployeeForm');
 })->middleware('auth')->name('employeeform');
 
 Route::get('/render_employeeform', [ItemController::class, 'index'])
-    ->middleware('auth')->name('render_employeeform');
+    ->middleware('auth')->name('render_employeeform');*/
 
 Route::get('/activityplanning', function(){
     return Inertia::render('ActivityPlanning');
@@ -64,6 +63,13 @@ Route::get('/invite/{token}', [InvitationController::class, 'acceptInvitation'])
 Route::get('/invite2', function(){
     return Inertia::render('InviteForm2');
 })->middleware('auth')->name('inviteform');
+
+Route::get('/atividade', function() {
+    return Inertia::render('Plan_activity');
+})->middleware('auth')->name('plan_activity');
+
+Route::get('/participantauth', function() {return Inertia::render('ParticipantAuth');});
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

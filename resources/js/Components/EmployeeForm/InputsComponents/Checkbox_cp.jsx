@@ -64,7 +64,7 @@ function Checkbox_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, se
                 </div>
             </div>
             {showButtons && (
-            <div>
+            <div className={"flex"}>
                 <Button className={"ml-2 py-2 px-3"} onClick={() => onEditItem(id)}>
                     <FontAwesomeIcon icon={faEdit} className={" w-4 h-4"} />
                 </Button>

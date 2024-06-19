@@ -17,4 +17,22 @@ class ApiQuestionnaireController extends Controller
 
         return $response;
     }
+    public function ApiRadio(Request $request)
+    {
+        $data = $request->all();
+
+        $openAIClient = new OpenAIClient();
+        $response = $openAIClient->generateRadioQuestion($data);
+
+        return $response;
+    }
+    public function ApiText(Request $request)
+    {
+        $data = $request->all();
+
+        $openAIClient = new OpenAIClient();
+        $response = $openAIClient->generateTextQuestion($data);
+
+        return $response;
+    }
 }

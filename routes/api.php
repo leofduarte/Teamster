@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApiChatController;
 use App\Http\Controllers\ApiQuestionnaireController;
+use App\Http\Controllers\Auth\ParticipantAuth\ParticipantAuthController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ExtractEmailController;
 use App\Http\Controllers\InvitationController;
@@ -17,6 +18,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/v1/activity-planning', [ApiChatController::class, 'ChatActivityPlanning']);
+
+Route::post('/v1/atividade-inicial', [ApiChatController::class, 'ChatActivityPlanning']);
 
 Route::post('/v1/items', [ItemController::class, 'store']);
 
@@ -46,4 +49,10 @@ Route::post('/v1/getDepartments', [DepartmentController::class, 'getDepartments'
 
 Route::post('/v1/checkbox', [ApiQuestionnaireController::class, 'ApiCheckbox']);
 
+Route::post('/v1/radio', [ApiQuestionnaireController::class, 'ApiRadio']);
+
+Route::post('/v1/text', [ApiQuestionnaireController::class, 'ApiText']);
+
+Route::post('/v1/participantauth/login', [ParticipantAuthController::class, 'login']);
+Route::post('/v1/participantauth/verify', [ParticipantAuthController::class, 'verifyCode']);
 

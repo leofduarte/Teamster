@@ -36,6 +36,17 @@ const AddParticipantToTeam = ({teamId, fetchTeamsAndParticipants, setParticipant
                 description: `${participantData.email} has been added to the team.`,
             });
 
+            // Send email invitations
+            participantEmails.forEach(emailObj => {
+                axios.post('/api/v1/invite', { email: emailObj.email, team_id: teamId })
+                    .then(response => {
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
             fetchTeamsAndParticipants();
             setParticipantEmail('');
         } catch (error) {

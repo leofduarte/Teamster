@@ -19,6 +19,7 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
           calendar: "border-input focus:input focus-visible:input focus:border-input focus:ring-input bg-transparent hover:text-primary/90",
+          generate: "bg-violet-600 text-white hover:bg-violet-600 hover:opacity-90",
       },
         size: {
         default: "h-10 px-4 py-2",
