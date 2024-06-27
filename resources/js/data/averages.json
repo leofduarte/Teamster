@@ -1,0 +1,38 @@
+{
+    "questions": [
+      {
+        "id": 1,
+        "question": "Que tipos de filmes te cativam mais?",
+        "options": [
+          "Drama ou romance",
+          "Ação ou aventura",
+          "Fantasia ou ficção científica",
+          "Comédia ou filmes independentes",
+          "Outros"
+        ]
+      },
+      {
+        "id": 2,
+        "question": "Se tivesses oportunidade, que atividade gostarias de experimentar ou aprofundar?",
+        "options": [
+          "Aprender a tocar um instrumento musical",
+          "Experimentar um novo desporto ou atividade física",
+          "Participar em aulas de pintura, escultura ou outra expressão artística",
+          "Envolvimento em grupos de discussão sobre temas de interesse",
+          "Outros"
+        ]
+      },
+      {
+        "id": 3,
+        "question": "Imagina um dia inteiramente teu; como gostarias de o passar?",
+        "options": [
+          "A devorar um livro ou a assistir a um filme no conforto da tua casa",
+          "A explorar trilhas na natureza ou a praticar desportos ao ar livre",
+          "A absorver arte numa galeria ou a participar em workshops criativos",
+          "A desfrutar de um animado almoço ou jantar na companhia de amigos",
+          "Outros"
+        ]
+      }
+    ]
+  }
+  

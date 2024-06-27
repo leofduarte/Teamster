@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
-use Illuminate\Http\Request;
+use App\Models\User;
 
 class DepartmentController extends Controller
 {
-    public function getDepartments()
+    public function getDepartments(User $user)
     {
-        $departments = Department::all();
+        $departments = $user->departments;
+
         return response()->json($departments);
     }
 }

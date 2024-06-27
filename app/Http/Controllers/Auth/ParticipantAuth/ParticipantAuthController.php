@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth\ParticipantAuth;
 use App\Models\ParticipantAuth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 
@@ -21,7 +22,7 @@ class ParticipantAuthController extends Controller
             'created_at' => Carbon::now(),
         ]);
 
-        Mail::raw("Your login code is $code", function ($message) use ($email) {
+        Mail::send('emails.participantcode', ['code' => $code], function ($message) use ($email) {
             $message->to($email)->subject('ParticipantAuth Code');
         });
 
@@ -39,13 +40,19 @@ class ParticipantAuthController extends Controller
             ->first();
 
         if ($record) {
-            ParticipantAuth::where('email', $email)->delete();
+            $participant = Auth::guard('participants')->getProvider()->retrieveByCredentials(['email' => $email]);
 
-            dd($record);
 
+
+            //ParticipantAuth::where('email', $email)->delete();
+
+
+            //$request->session()->put('participant_email', $email);
+            Auth::guard('participants')->login($participant);
+
+            dd(Auth::guard('participants')->user());
             return response()->json(['message' => 'ParticipantAuth successful']);
         } else {
-            dd($record);
             return response()->json(['message' => 'Invalid or expired code'], 400);
         }
     }

@@ -18,10 +18,8 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-          calendar: "border-input focus:input focus-visible:input focus:border-input focus:ring-input bg-transparent hover:text-primary/90",
-          generate: "bg-violet-600 text-white hover:bg-violet-600 hover:opacity-90",
       },
-        size: {
+      size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",

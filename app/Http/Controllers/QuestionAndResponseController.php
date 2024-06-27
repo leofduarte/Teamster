@@ -41,10 +41,17 @@ class QuestionAndResponseController
         return response()->json(['message' => 'Responses added successfully'], 201);
     }
 
-    public function addQuestion(Request $request)
+    public function addUpdateQuestion(Request $request)
     {
-        $questions = $request->input('items');
+        $newQuestions = $request->input('items');
         $questionnaire_id = $request->input('questionnaire_id');
+
+        foreach ($newQuestions as &$newQuestion) {
+            if ($newQuestion['type'] === 'radio' && isset($newQuestion['options']) && is_string($newQuestion['options'])) {
+                $newQuestion['options'] = json_decode($newQuestion['options'], true);
+            }
+        }
+        unset($newQuestion);
 
         $validator = Validator::make($request->all(), [
             'items.*.type' => 'required|string',
@@ -52,8 +59,68 @@ class QuestionAndResponseController
             'items.*.placeholder' => 'nullable|string',
             'items.*.tooltip' => 'nullable|string',
             'items.*.description' => 'nullable|string',
-            'items.*.options' => 'required_if:items.*.type,radio|array', // Add this line
+            'items.*.options' => 'required_if:items.*.type,radio|array',
             'questionnaire_id' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
+        $existingQuestions = Question::where('questionnaire_id', $questionnaire_id)->get();
+
+        foreach ($existingQuestions as $existingQuestion) {
+            $found = false;
+            foreach ($newQuestions as $index => $newQuestion) {
+                if ($existingQuestion->id == $newQuestion['id']) {
+                    $found = true;
+                    if ($existingQuestion->isDirty()) {
+                        $existingQuestion->update($newQuestion);
+                    }
+                    unset($newQuestions[$index]);
+                    break;
+                }
+            }
+            if (!$found) {
+                $existingQuestion->delete();
+            }
+        }
+
+        foreach ($newQuestions as $newQuestion) {
+            Question::create([
+                'type' => $newQuestion['type'],
+                'label' => $newQuestion['label'],
+                'placeholder' => $newQuestion['placeholder'] ?? null,
+                'tooltip' => $newQuestion['tooltip'] ?? null,
+                'description' => $newQuestion['description'] ?? null,
+                'options' => isset($newQuestion['options']) && !empty($newQuestion['options']) ? json_encode($newQuestion['options']) : null,
+                'questionnaire_id' => $questionnaire_id,
+
+            ]);
+        }
+
+        return response()->json(['message' => 'Questions updated successfully'], 201);
+    }
+
+    public function addQuestion(Request $request)
+    {
+        $questions = $request->input('items');
+        $questionnaire_id = $request->input('questionnaire_id');
+        $is_mandatory = $request->input('is_mandatory');
+
+        $validator = Validator::make($request->all(), [
+            'items.*.type' => 'required|string',
+            'items.*.label' => 'required|string',
+            'items.*.placeholder' => 'nullable|string',
+            'items.*.tooltip' => 'nullable|string',
+            'items.*.description' => 'nullable|string',
+            'items.*.options' => 'required_if:items.*.type,radio|array',
+            'items.*.is_mandatory' => 'required|boolean', // Add this line
+            'questionnaire_id' => 'required|integer',
+            'is_mandatory' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -70,8 +137,9 @@ class QuestionAndResponseController
                 'placeholder' => $question['placeholder'] ?? null,
                 'tooltip' => $question['tooltip'] ?? null,
                 'description' => $question['description'] ?? null,
-                'options' => isset($question['options']) ? json_encode($question['options']) : null,
+                'options' => isset($question['options']) && !empty($question['options']) ? json_encode($question['options']) : null,
                 'questionnaire_id' => $questionnaire_id,
+                'is_mandatory' => $question['is_mandatory'], // Add this line
             ]);
         }
 
@@ -118,10 +186,11 @@ class QuestionAndResponseController
             return response()->json(['message' => 'Participant or Questionnaire not found'], 404);
         }
 
-        // Check if the participant is part of the team that is allowed to answer the questionnaire
-        $teamId = $questionnaire->teams()->first()->id;
-        if (!$participant->teams()->where('team_id', $teamId)->exists()) {
-            return response()->json(['message' => 'You are not part of the team that is allowed to answer this questionnaire'], 403);
+        $team = $questionnaire->teams()->first();
+        if ($team) {
+            $teamId = $team->id;
+        } else {
+            return response()->json(['message' => 'No teams associated with this questionnaire'], 404);
         }
 
         foreach ($request->input('responses') as $response) {
@@ -135,7 +204,7 @@ class QuestionAndResponseController
             }
 
             Response::create([
-                'response' => $response['response'], // This should be the id of the selected option for radio buttons
+                'response' => $response['response'],
                 'question_id' => $response['question_id'],
                 'participant_id' => $participant->id,
             ]);
@@ -144,34 +213,5 @@ class QuestionAndResponseController
         return response()->json(['message' => 'Responses added successfully'], 201);
     }
 
-    public function assignQuestionnaire(Request $request)
-    {
-        $team_id = $request->input('team_id');
-        $questionnaire_id = $request->input('questionnaire_id');
 
-        $validator = Validator::make($request->all(), [
-            'team_id' => 'required|integer',
-            'questionnaire_id' => 'required|integer',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-            ], 400);
-        }
-
-        $team = Team::find($team_id);
-        $questionnaire = Questionnaire::find($questionnaire_id);
-
-        if (!$team || !$questionnaire) {
-            return response()->json([
-                'message' => 'Team or Questionnaire not found',
-            ], 404);
-        }
-
-        $team->questionnaires()->attach($questionnaire_id);
-
-        return response()->json(['message' => 'Questionnaire assigned to team successfully'], 201);
-    }
 }

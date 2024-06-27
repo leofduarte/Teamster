@@ -46,4 +46,13 @@ class ParticipantController extends Controller
             'message' => 'Responses saved successfully',
         ]);
     }
+
+    public function getParticipants()
+    {
+        $participants = Participant::with('items')->get();
+
+        return response()->json([
+            'participants' => $participants,
+        ]);
+    }
 }

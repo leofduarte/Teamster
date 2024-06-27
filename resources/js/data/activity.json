@@ -1,0 +1,45 @@
+{
+    "title": "Barco Team Building",
+    "description": "Nesta atividade, a sua equipa embarcará numa emocionante navegação onde cada membro tem um papel crucial. A bordo de um barco, as equipas enfrentam uma série de desafios, cada um exigindo estratégia e trabalho em equipa.",
+    "date": "15/08/2024",
+    "duration": "1 Dia",
+    "resources": "barco à vela / instrutor de navegação",
+    "meeting_point": "Praia da Barra",
+    "activities": [
+      {
+        "title": "Explicação Inicial",
+        "description": "O instrutor explica à equipa o funcionamento do barco."
+      },
+      {
+        "title": "Desafio de Confiança",
+        "description": "Um dos membros da equipa deverá vendar os olhos e tomar conta do leme enquanto os outros elementos terão de o orientar."
+      },
+      {
+        "title": "Caça ao Tesouro",
+        "description": "Depois de chegar perto da ilha, os elementos da equipa terão de utilizar uma prancha de SUP para subir e chegar a terra."
+      },
+      {
+        "title": "Almoço",
+        "description": "Depois de terminarem a caça ao tesouro, está na hora de almoçar um bom prato de massa à carbonara (com natas sem lactose). Para isto, serão necessários dois elementos da equipa para cozinhar e dois para lavar a louça."
+      },
+      {
+        "title": "Regresso",
+        "description": "Depois de almoçar, está na hora de regressar. Nesta tarefa, todos os participantes devem colaborar e o instrutor apenas ajudará quando necessário."
+      }
+    ],
+    "schedule": [
+      { "time": "10:00", "activity": "Ponto de Encontro" },
+      { "time": "10:30", "activity": "Início da Viagem" },
+      { "time": "10:56", "activity": "Chegada à Ilha" },
+      { "time": "12:30", "activity": "Almoço e Convívio" },
+      { "time": "13:00", "activity": "Armar e Lavar a Louça" },
+      { "time": "13:15", "activity": "Começar a Viagem de Regresso" }
+    ],
+    "tasks": [
+      "Levar casaco corta-vento",
+      "Levar óculos de sol",
+      "Levar chapéu",
+      "Colocar protetor solar"
+    ]
+  }
+  

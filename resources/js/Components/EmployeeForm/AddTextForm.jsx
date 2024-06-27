@@ -52,6 +52,7 @@ function AddTextForm({ isModalOpen, setIsModalOpen, currentItem, setCurrentItem,
     }
   };
 
+
   const handleInputChange = (id, value) => {
     setItems((items) =>
         items.map((item) =>
@@ -103,8 +104,8 @@ function AddTextForm({ isModalOpen, setIsModalOpen, currentItem, setCurrentItem,
   const sensors = useSensors(pointerSensor);
 
   return (
-      <div>
-        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+      <>
+          <DndContext sensors={sensors}  onDragEnd={handleDragEnd}>
           <SortableContext items={items.filter(Boolean).map(item => item.id)} strategy={verticalListSortingStrategy}>
             {items.map((item) => item && (
                 <SortItem key={item.id} id={item.id} item={item} onInputChange={handleInputChange} onEditItem={handleEditItem}   handleDeleteItem={handleDeleteItem} className={"m-4"} />
@@ -202,7 +203,7 @@ function AddTextForm({ isModalOpen, setIsModalOpen, currentItem, setCurrentItem,
                 </div>
             </Modal>
         )}
-      </div>
+      </>
 
 
   );

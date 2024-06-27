@@ -39,9 +39,11 @@ function Radio_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, setNo
         }
     }
 
-    useEffect(() => {
-        console.log('Item:', item);
-    }, [item]);
+/*
+useEffect(() => {
+    console.log('Item:', item);
+}, [item]);
+*/
 
     return (
     <div className="flex items-center justify-between">

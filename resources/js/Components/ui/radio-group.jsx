@@ -4,7 +4,7 @@ import { Circle } from "lucide-react"
 import { cn } from "../../lib/utils.js"
 
 const RadioGroup = React.forwardRef(({ className, ...props }, ref) => {
-  return (<RadioGroupPrimitive.Root className={cn("grid gap-2", className)} {...props} ref={ref} />);
+  return (<RadioGroupPrimitive.Root className={cn("grid gap-1", className)} {...props} ref={ref} />);
 })
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
 

@@ -53,8 +53,19 @@ class User extends Authenticatable
      */
     public function teams()
     {
+        return $this->belongsToMany(Team::class, 'department_user', 'user_id', 'department_id')
+            ->using(Department::class)
+            ->withPivot('department_id')
+            ->as('department');
+    }
 
-        return $this->hasMany(Team::class);
+    public function departments()
+    {
+        return $this->belongsToMany(Department::class, 'department_user');
+    }
 
+    public function questionnaires()
+    {
+        return $this->hasMany(Questionnaire::class);
     }
 }

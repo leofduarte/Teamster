@@ -7,7 +7,6 @@ import { Checkbox } from "@/Components/ui/checkbox.jsx";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/Components/ui/tooltip.jsx";
 
 function Checkbox_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, setNodeRef, attributes, listeners, showButtons, showGrab }) {
-
     return (
         <div className="flex items-center justify-between">
             <div className="flex items-center">

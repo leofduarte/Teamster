@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "title": "Contabilidade",
+    "department": "Departamento Financeiro",
+    "members": [
+      { "id": 1, "name": "Rui Jorge", "photo": "rui-jorge.jpg" },
+      { "id": 2, "name": "André Santos", "photo": "andre-santos.jpg" },
+      { "id": 3, "name": "Ricardo Guedes", "photo": "ricardo-guedes.jpg" },
+      { "id": 4, "name": "Rita Sampaio", "photo": "rita-sampaio.jpg" },
+      { "id": 5, "name": "Marta Pereira", "photo": "marta-pereira.jpg" },
+      { "id": 6, "name": "Ana Silva", "photo": "ana-silva.jpg" },
+          { "id": 7, "name": "Tiago Fernandes", "photo": "tiago-fernandes.jpg" }
+    ]
+  }
+]
+

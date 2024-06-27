@@ -15,4 +15,9 @@ class Questionnaire extends Model
     {
         return $this->belongsToMany(Team::class, 'team_questionnaire');
     }
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class, 'questionnaire_id');
+    }
 }

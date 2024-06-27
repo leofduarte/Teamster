@@ -16,6 +16,7 @@ const InputVariants = cva(
                     "bg-secondary text-secondary-foreground hover:bg-secondary/80",
                 ghost: "hover:bg-accent hover:text-accent-foreground",
                 link: "text-primary underline-offset-4 hover:underline",
+                activity: "text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 bg-white border-none border rounded border-gray-400 text-large shadow-md ring-1 ring-gray-200 focus-visible:border-0",
             },
             size: {
                 default: "h-10 px-4 py-2",

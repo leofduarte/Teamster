@@ -1,0 +1,49 @@
+{
+    "questions": [
+      {
+        "id": 1,
+        "question": "O que te fascina mais no teu ambiente profissional?",
+        "options": [
+          "Alcançar metas concretas e ver resultados palpáveis",
+          "Explorar novos conhecimentos e desafiar a mente",
+          "Expressar a tua criatividade e contribuir com ideias únicas",
+          "Cooperar com colegas e desenvolver projetos em equipa",
+          "outros"
+        ]
+      },
+      {
+        "id": 2,
+        "question": "Como enfrentas momentos de pressão ou tensão?",
+        "options": [
+          "Prefiro momentos de solidão para refletir e recuperar a calma",
+          "Procuro apoio e conforto junto de amigos e familiares próximos",
+          "Procuro atividades criativas para canalizar o stress, como desenhar ou escrever",
+          "Recorro a exercícios físicos ou técnicas de meditação para relaxar e aliviar a tensão",
+          "outros"
+        ]
+      },
+      {
+        "id": 3,
+        "question": "Qual é a tua dinâmica ideal em situações sociais?",
+        "options": [
+          "Opto por interações mais profundas e íntimas com um círculo restrito de pessoas",
+          "Gosto de estar rodeado de pessoas e de cultivar novas amizades",
+          "Prefiro observar e participar em conversas sobre assuntos cativantes",
+          "Não me importo em ser o centro das atenções e dinamizando a interação todos presentes",
+          "outros"
+        ]
+      },
+      {
+        "id": 4,
+        "question": "Se pudesses viajar para um lugar específico, qual seria o destino dos teus sonhos?",
+        "options": [
+          "Uma cidade histórica enraizada em cultura e tradição",
+          "Uma praia paradisíaca com paisagens deslumbrantes e atmosfera relaxante",
+          "Um destino exótico e pouco explorado, repleto de aventuras e descobertas",
+          "Um local conhecido pela sua efervescência artística e cenário cultural vibrante",
+          "outros"
+        ]
+      }
+    ]
+  }
+  

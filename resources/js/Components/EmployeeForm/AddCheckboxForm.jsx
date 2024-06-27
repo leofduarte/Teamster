@@ -25,7 +25,6 @@ const AddCheckboxForm = ({
     const [askAPI, setAskAPI] = useState("");
     const [responseAPI, setResponseAPI] = useState("");
 
-
     const handleSubmitAPI = async (event) => {
         event.preventDefault();
 
@@ -40,11 +39,27 @@ const AddCheckboxForm = ({
         setResponseAPI(response.data);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmitCheck = (event) => {
         event.preventDefault();
         if (currentItem.label) {
-            handleUpdateItem({...currentItem});
-            setItems(prevItems => [...prevItems, currentItem]);
+            const existingItemIndex = items.findIndex(item => item.id === currentItem.id);
+            if (existingItemIndex !== -1) {
+                // The item already exists in the array, update it
+                setItems(prevItems => {
+                    return prevItems.map((item, index) => {
+                        if (index === existingItemIndex) {
+                            // This is the item we want to update
+                            return currentItem;
+                        } else {
+                            // This is not the item we want to update, leave it as is
+                            return item;
+                        }
+                    });
+                });
+            } else {
+                // The item doesn't exist in the array, add it
+                setItems(prevItems => [...prevItems, currentItem]);
+            }
             setIsModalOpen(false);
         } else {
             setError("Please enter a label for the checkbox.")
@@ -103,7 +118,7 @@ const AddCheckboxForm = ({
     }, [currentItem]);
 
     return (
-        <div>
+        <>
             <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
                 <SortableContext items={items.filter(Boolean).map(item => item.id)}
                                  strategy={verticalListSortingStrategy}>
@@ -139,7 +154,7 @@ const AddCheckboxForm = ({
 
                 <Separator className={"my-8"} />
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmitCheck}>
                     <label className={"text-black"}>
                         Label:
                         <Input type="text" value={currentItem.label} onChange={(e) =>
@@ -172,7 +187,7 @@ const AddCheckboxForm = ({
                     {error && <p className="text-red-500">{error}</p>}
 
                     <div className={"flex justify-end"}>
-                        <Button type="button" onClick={handleSubmit} className={"mt-4"}>
+                        <Button type="button" onClick={handleSubmitCheck} className={"mt-4"}>
                             Submit
                         </Button>
                     </div>
@@ -197,7 +212,7 @@ const AddCheckboxForm = ({
                     )}
                 </div>
             </Modal>
-        </div>
+        </>
     );
 };
 

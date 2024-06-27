@@ -25,7 +25,7 @@ function SortItem({ id, item, onInputChange, onEditItem, handleDeleteItem }) {
 
   return (
     <div
-      className={"m-6"}
+      className={"my-4 bg-white p-4 min-h-fit rounded-xl gap-4 flex flex-col shadow-lg"}
       ref={setNodeRef}
       style={style}
       {...attributes}

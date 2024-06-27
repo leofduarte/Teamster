@@ -5,6 +5,7 @@ import logo from "../../../public/build/assets/logo.svg";
 import {Button} from "../Components/ui/button.jsx";
 import {Input} from "../Components/ui/input.jsx";
 import {Label} from "../Components/ui/label.jsx";
+import { Inertia } from '@inertiajs/inertia';
 
 function ParticipantAuth() {
     const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ function ParticipantAuth() {
     const [code, setCode] = useState('');
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // This line prevents the form from submitting normally, which would cause a page reload
+        e.preventDefault();
         if (!emailSent) {
             try {
                 const response = await axios.post('/api/v1/participantauth/login', { email });
@@ -25,9 +26,8 @@ function ParticipantAuth() {
             try {
                 const response = await axios.post('/api/v1/participantauth/verify', { email, code });
                 console.log(response.data);
-                if (response.data.message === 'Login successful') {
                     console.log('Login successful');
-                }
+                Inertia.visit('/participant');
             } catch (error) {
                 console.error(error);
             }
@@ -37,17 +37,17 @@ function ParticipantAuth() {
         <>
             <div className="h-screen w-screen bg-[#F8F7FC]">
                 <div>
-                    <img className="z-0 fixed h-[10%] w-auto" src={logo} alt="Logo"/>
+                    <img className="z-50 fixed h-[10%] w-auto" src={logo} alt="Logo"/>
                 </div>
 
-                <div className="z-10 fixed inset-0 flex justify-center">
-                    <div className="text-center w-[27%] px-6 bg-white rounded-[2rem] place-content-center">
-                        <h1 className="text-2xl font-serif uppercase">Iniciar Sessão</h1>
+                <div className="z-10 flex items-center justify-center min-h-screen bg-[#F8F7FC]">
+                    <div className=" z-10 p-8 bg-white rounded-[2rem] shadow-lg">
+                        <h1 className="mb-6 text-2xl font-serif text-center text-gray-700 uppercase">Iniciar Sessão</h1>
                         <form onSubmit={handleSubmit}>
                             {!emailSent ? (
                                 <>
                                     <Label className={"text-start"}>E-mail</Label>
-                                    <Input type="text" value={email} onChange={e => setEmail(e.target.value)}/>
+                                    <Input className={"mb-2"} type="text" value={email} onChange={e => setEmail(e.target.value)}/>
                                     <Button type="submit">
                                         Send Code
                                     </Button>

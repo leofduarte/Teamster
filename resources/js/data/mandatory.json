@@ -1,0 +1,55 @@
+{
+    "questions": [
+      {
+        "id": 1,
+        "question": "Quando tens tempo livre, o que preferes fazer?",
+        "options": [
+          "Ler um livro",
+          "Ver um filme",
+          "Praticar um hobby criativo, como pintar ou tocar um instrumento",
+          "Sair com amigos ou conviver",
+          "Outros"
+        ]
+      },
+      {
+        "id": 2,
+        "question": "Como te sentes em relação a atividades físicas e desporto?",
+        "options": [
+          "Muito confortável",
+          "Confortável",
+          "Indiferente",
+          "Nada Confortável"
+        ]
+      },
+      {
+        "id": 3,
+        "question": "Tens alguma restrição alimentar ou alergia de que precisamos estar cientes? Se sim, por favor, especifica",
+        "options": []
+      },
+      {
+        "id": 4,
+        "question": "Gostas de nadar?",
+        "options": [
+          "Gosto de nadar e sinto-me confortável em águas profundas",
+          "Gosto de nadar onde tenho pé",
+          "Não gosto de nadar"
+        ]
+      },
+      {
+        "id": 5,
+        "question": "Qual é o teu nível de conforto em atividades ao ar livre (caminhadas, acampamentos, etc.)?",
+        "options": [
+          "Muito confortável",
+          "Confortável",
+          "Indiferente",
+          "Nada Confortável"
+        ]
+      },
+      {
+        "id": 6,
+        "question": "Tens alguma condição de saúde ou lesão permanente que possa afetar a tua participação em alguma atividade?",
+        "options": []
+      }
+    ]
+  }
+  

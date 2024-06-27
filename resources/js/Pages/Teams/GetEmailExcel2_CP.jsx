@@ -242,7 +242,7 @@ const GetEmailExcel = ({setEmails}) => {
 
     return (
                     <div className={"flex flex-col gap-2"}>
-                        <Input type="file" onChange={handleFileUpload} className={"cursor-pointer"}/>
+                        <Input type="file" onChange={handleFileUpload} className={"cursor-pointer"}  variant={"activity"} />
 
                         {sheetNames.length > 1 && (
                             <Select onValueChange={value => setSheetName(value)}>
@@ -264,14 +264,17 @@ const GetEmailExcel = ({setEmails}) => {
 
                         {sheetNames.length > 0 && (
                         <Input type="text" className={"my-1"} placeholder="Enter column letter" value={column}
+                               variant={"activity"}
                                onChange={e => setColumn(e.target.value.toUpperCase())}/>
                         )}
 
                         {column !== '' && (
                             <div className={"flex gap-1"}>
                                 <Input type="number" min="1" placeholder="Enter min row number" value={minRow}
+                                       variant={"activity"}
                                        onChange={e => setMinRow(e.target.value)}/>
                                 <Input type="number" min="1" placeholder="Enter max row number" value={maxRow}
+                                       variant={"activity"}
                                        onChange={e => setMaxRow(e.target.value)}/>
                             </div>
                         )}

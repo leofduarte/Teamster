@@ -29,12 +29,12 @@ function AddRadioForm({
   items,
   setItems,
 }) {
-  const [options, setOptions] = useState([
-    { id: "option-1", label: "" },
-    { id: "option-2", label: "" },
-    { id: "option-3", label: "" },
-    { id: "option-4", label: "" },
-  ]);
+    const [options, setOptions] = useState(currentItem?.options || [
+        { id: "option-1", label: "" },
+        { id: "option-2", label: "" },
+        { id: "option-3", label: "" },
+        { id: "option-4", label: "" },
+    ]);
   const [label, setLabel] = useState("");
     const [selectedValue, setSelectedValue] = useState(null);
     const [showInput, setShowInput] = useState(false);
@@ -45,22 +45,30 @@ function AddRadioForm({
     const handleSubmitAPI = async (event) => {
         event.preventDefault();
 
-        const response = await axios.post('/api/v1/radio', {
-            askAPI: askAPI,
-        });
-        console.log(response.data);
-        const mappedOptions = response.data.options.map((option, index) => ({
-            id: `option-${index + 1}`,
-            label: option,
-        }));
+        try {
+            const response = await axios.post('/api/v1/radio', {
+                askAPI: askAPI,
+            });
+            console.log(response.data);
+            const mappedOptions = Array.isArray(response.data.options)
+                ? response.data.options.map((option, index) => ({
+                    id: `option-${index + 1}`,
+                    label: option,
+                }))
+                : [];
 
-        setCurrentItem({
-            ...currentItem,
-            label: response.data.label,
-            options: mappedOptions,
-        });
+            setCurrentItem({
+                ...currentItem,
+                label: response.data.label || '',
+                options: mappedOptions,
+            });
 
-        setResponseAPI(response.data);
+            setOptions(mappedOptions);
+            setLabel(response.data.label || '');
+            setResponseAPI(response.data);
+        } catch (error) {
+            console.error('Error fetching data from API:', error);
+        }
     };
 
 const addOption = () => {
@@ -111,48 +119,55 @@ const addOption = () => {
     setIsModalOpen(true);
   };
 
-  const handleConfigureItem = (event) => {
-    event.preventDefault();
+    const handleConfigureItem = (event) => {
+        event.preventDefault();
 
-    setItems((prevItems) => {
-      const existingItemIndex = prevItems.findIndex(
-          (item) => item.id === currentItem.id
-      );
+        setItems((prevItems) => {
+            const existingItemIndex = prevItems.findIndex(
+                (item) => item.id === currentItem.id
+            );
 
-      const updatedItem = {
-        ...currentItem,
-        label,
-        options,
-      };
+            const updatedItem = {
+                ...currentItem,
+                label,
+                options: Array.isArray(options) ? options : [],
+            };
 
-      if (existingItemIndex !== -1) {
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex] = updatedItem;
-        return updatedItems;
-      } else {
-        return [...prevItems, updatedItem];
-      }
-    });
+            if (existingItemIndex !== -1) {
+                const updatedItems = [...prevItems];
+                updatedItems[existingItemIndex] = updatedItem;
+                return updatedItems;
+            } else {
+                return [...prevItems, updatedItem];
+            }
+        });
 
-    setLabel("");
-    setOptions([
-      { id: "option-1", label: "" },
-      { id: "option-2", label: "" },
-      { id: "option-3", label: "" },
-      { id: "option-4", label: "" },
-    ]);
+        setLabel("");
+        setOptions([
+            { id: "option-1", label: "" },
+            { id: "option-2", label: "" },
+            { id: "option-3", label: "" },
+            { id: "option-4", label: "" },
+        ]);
 
-    setIsModalOpen(false);
-  };
+        setIsModalOpen(false);
+    };
 
-  useEffect(() => {
-    if (currentItem && currentItem.options) {
-      setLabel(currentItem.label);
-      setOptions(currentItem.options);
-    }
-    console.log(currentItem);
-    console.log(items);
-  }, [currentItem, items]);
+    useEffect(() => {
+        if (currentItem && Array.isArray(currentItem.options)) {
+            setLabel(currentItem.label || '');
+            setOptions(currentItem.options);
+        } else {
+            setOptions([
+                { id: "option-1", label: "" },
+                { id: "option-2", label: "" },
+                { id: "option-3", label: "" },
+                { id: "option-4", label: "" },
+            ]);
+        }
+        console.log(currentItem);
+        console.log(items);
+    }, [currentItem, items]);
 
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
@@ -169,7 +184,7 @@ const addOption = () => {
 
 
   return (
-    <div>
+    <>
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
         <SortableContext
           items={items.filter(Boolean).map((item) => item.id)}
@@ -202,7 +217,7 @@ const addOption = () => {
               <h2 className="text-center text-xl text-black">Configure Input</h2>
 
 
-              <div className={""}>
+              <div>
                   <Button onClick={() => setShowInput(prevShowInput => !prevShowInput)} className={"mb-2"}
                           variant={"generate"}>
                       <FontAwesomeIcon icon={faWandMagicSparkles}/>
@@ -231,7 +246,9 @@ const addOption = () => {
                               className="text-black"
                               onChange={e => setLabel(e.target.value)}
                               value={label}
-                          /> {options.map((option) => (
+                          />
+
+                          {Array.isArray(options) && options.map((option) => (
                           <div key={option.id} className="flex items-center space-x-2">
                               <RadioGroupItem value={option.id} id={option.id}/>
                               <Input
@@ -292,7 +309,7 @@ const addOption = () => {
               </div>
           </Modal>
       )}
-    </div>
+    </>
   );
 }
 

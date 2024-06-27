@@ -6,12 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model
 {
-    protected $fillable = ['name'];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    protected $fillable = ['name', 'department_id'];
 
     public function participants()
     {
@@ -20,11 +15,11 @@ class Team extends Model
 
     public function questionnaires()
     {
-        return $this->belongsToMany(Questionnaire::class);
+        return $this->belongsToMany(Questionnaire::class, 'team_questionnaire');
     }
 
-
-
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 }
-
-

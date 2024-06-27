@@ -13,4 +13,9 @@ class ParticipantAuth extends Model
     protected $table = 'participant_auth';
 
     protected $fillable = ['email', 'code', 'created_at'];
+
+    public function participant()
+    {
+        return $this->belongsTo(Participant::class, 'email', 'email');
+    }
 }

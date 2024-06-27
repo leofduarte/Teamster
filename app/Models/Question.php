@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
 {
-    protected $fillable = ['type', 'label', 'placeholder', 'tooltip', 'description', 'options', 'questionnaire_id'];
+    protected $fillable = ['type', 'label', 'placeholder', 'tooltip', 'description', 'options', 'questionnaire_id', 'is_mandatory'];
 }

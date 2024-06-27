@@ -21,12 +21,12 @@ export default function Authenticated({ user, header, children }) {
                                 </Link>
                             </div>
 
-
                             {/*<div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
                                 <NavLink href={route('employeeform')} active={route().current('employeeform')}>
                                     Employee Form
                                 </NavLink>
                             </div>
+
                             <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
                                 <NavLink href={route('render_employeeform')}
                                          active={route().current('render_employeeform')}>
@@ -35,17 +35,12 @@ export default function Authenticated({ user, header, children }) {
                             </div>*/}
 
                             <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
-                                <NavLink href={route('questionnaire')} active={route().current('questionnaire')}>
-                                    Questionnaire
-                                </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
                                 <NavLink href={route('addresponse')} active={route().current('addresponse')}>
                                     Add Response
                                 </NavLink>
                             </div>
                             <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
-                                <NavLink href={route('activityplanning')} active={route().current('activityplanning')}>
+                                <NavLink href={route('atividade')} active={route().current('atividade')}>
                                     Activity Planning
                                 </NavLink>
                             </div>
@@ -124,12 +119,6 @@ export default function Authenticated({ user, header, children }) {
                 </div>
 
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
-                    <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
                     <div className="border-t border-gray-200 pt-4 pb-1">
                         <div className="px-4">
                             <div className="text-base font-medium text-gray-800">{user.name}</div>

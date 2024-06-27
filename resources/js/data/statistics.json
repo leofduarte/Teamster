@@ -1,0 +1,48 @@
+[
+    {
+      "id": 1,
+      "title": "Feedback",
+      "description": "Avaliação Geral das Atividades",
+      "chartType": "pie",
+      "data": [2, 5, 10, 20, 30],
+      "labels": ["Muito mau", "Insatisfatório", "Satisfatório", "Bom", "Muito Bom"],
+      "backgroundColor": ["#F54468", "#FE9DCB", "#FECD28", "#6C3FFE", "#56C496"]
+    },
+    {
+      "id": 2,
+      "title": "Participação",
+      "description": "Média nas Atividades",
+      "chartType": "bar",
+      "data": [15, 25, 35, 45, 20],
+      "labels": ["Janeiro", "Fevereiro", "Março", "Abril", "Maio"],
+      "backgroundColor": ["#F54468", "#FE9DCB", "#FECD28", "#6C3FFE", "#56C496"]
+    },
+    {
+      "id": 3,
+      "title": "Produtividade",
+      "description": "Da Equipa",
+      "chartType": "line",
+      "data": [5, 15, 25, 10, 30],
+      "labels": ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5"],
+      "backgroundColor": ["#F54468", "#FE9DCB", "#FECD28", "#6C3FFE", "#56C496"]
+    },
+    {
+      "id": 4,
+      "title": "Envolvimento",
+      "description": "Da Equipa",
+      "chartType": "doughnut",
+      "data": [7, 14, 21, 28, 30],
+      "labels": [" Muito Baixo", "Baixo", "Médio", "Alto", "Muito Alto"],
+      "backgroundColor": ["#F54468", "#FE9DCB", "#FECD28", "#6C3FFE", "#56C496"]
+    },
+    {
+      "id": 5,
+      "title": "Satisfação",
+      "description": "Da Equipa",
+      "chartType": "radar",
+      "data": [9, 11, 18, 27, 36],
+      "labels": ["Mau", "Razoável", "Bom", "Ótimo", "Excelente"],
+      "backgroundColor": ["#F54468", "#FE9DCB", "#FECD28", "#6C3FFE", "#56C496"]
+    }
+  ]
+  

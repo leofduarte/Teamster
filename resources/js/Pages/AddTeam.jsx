@@ -10,17 +10,6 @@ const AddTeam = ({auth}) => {
     const [error, setError] = useState(null);
     const [teamName, setTeamName] = useState('');
     const {toast} = useToast();
-    const [departments, setDepartments] = useState([]);
-
-    const fetchDepartments = async () => {
-        try {
-            const response = await axios.post('/api/v1/getDepartments');
-            setDepartments(response.data);
-            console.log(departments);
-        } catch (error) {
-            console.error('Error fetching departments:', error);
-        }
-    }
 
     const submitTeam = async (event) => {
         event.preventDefault();
@@ -57,11 +46,6 @@ const AddTeam = ({auth}) => {
             });
         }
     }
-
-    useEffect(() => {
-        console.log(departments.map(department => department.id));
-    }, [departments]);
-
 
     return (
         <div className={"m-8"}>
