@@ -15,9 +15,9 @@ class ApiChatController extends Controller
         $openAIClient = new OpenAIClient();
         $response = $openAIClient->generateText($data);
 
-
         return $response;
     }
 
 
 }
+

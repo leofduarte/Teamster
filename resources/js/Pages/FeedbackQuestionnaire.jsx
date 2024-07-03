@@ -110,7 +110,6 @@ const Questionnaire = ({newquestionnaire_id}) => {
                     value: question.type === 'checkbox' ? [] : '',
                     isFetched: true,
                     is_mandatory: 1,
-
                 }));
                 setQuestion(fetchedQuestions);
             } catch (error) {
@@ -156,7 +155,7 @@ const Questionnaire = ({newquestionnaire_id}) => {
                                 <form onSubmit={handleSubmitFormToDB} className={"flex-grow"}>
                                     {question && question.map((question, index) => (
                                         <div key={index}
-                                             className={"bg-red-500 my-4 p-4 min-h-fit rounded-xl gap-4 flex flex-col shadow-lg"}>
+                                             className={"my-4 p-4 min-h-fit rounded-xl gap-4 flex flex-col shadow-lg"}>
                                             {question.type === 'text' && (
                                                 <Text_CP
                                                     id={question.id}

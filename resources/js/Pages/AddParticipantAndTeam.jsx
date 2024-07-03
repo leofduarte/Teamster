@@ -20,7 +20,7 @@ import {
     SelectValue
 } from "@/Components/ui/select.jsx";
 
-const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, departments}) => {
+const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, departmentsProps}) => {
     const [error, setError] = useState(null);
     const [teamName, setTeamName] = useState('');
     const {toast} = useToast();
@@ -28,11 +28,25 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
     const [participantEmails, setParticipantEmails] = useState([]);
     const [showGetEmailExcel, setShowGetEmailExcel] = useState(false);
     const [selectedDepartmentId, setSelectedDepartmentId] = useState(null);
+    const [newDepartmentName, setNewDepartmentName] = useState('');
+    const [departments, setDepartments] = useState(departmentsProps);
 
     const handleAddEmail = () => {
         if (participantEmail) {
             setParticipantEmails([...participantEmails, {email: participantEmail}]);
             setParticipantEmail('');
+        }
+    };
+
+    const handleAddDepartment = async () => {
+        try {
+            const response = await axios.post(`/api/v1/${auth.user.id}/adddepartment`, { name: newDepartmentName });
+            const newDepartment = response.data;
+            setDepartments([...departments, newDepartment]);
+            setSelectedDepartmentId(newDepartment.id);
+            setNewDepartmentName('');
+        } catch (error) {
+            console.error('Error adding department:', error);
         }
     };
 
@@ -151,9 +165,10 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
                     <div className="flex flex-row">
                         <Select
                             onValueChange={(selectedOption) => {
-                            const department = JSON.parse(selectedOption);
-                            setSelectedDepartmentId(department.id);
-                        }}>
+                                const department = JSON.parse(selectedOption);
+                                setSelectedDepartmentId(department.id);
+                            }}
+                        >
                             <SelectTrigger className="min-w-fit">
                                 <SelectValue placeholder="Select a Department"/>
                             </SelectTrigger>
@@ -170,6 +185,16 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
                                             {department.name}
                                         </SelectItem>
                                     ))}
+                                    <div className="flex flex-row">
+                                        <Input type="text" name="newDepartment" id="newDepartment"
+                                               variant={"activity"} placeholder="New Department Name"
+                                               value={newDepartmentName}
+                                               onChange={(e) => setNewDepartmentName(e.target.value)}/>
+                                        <Button variant={"secondary"} className={"ms-2 mt-1"} type="button"
+                                                onClick={handleAddDepartment}>
+                                            Add Department
+                                        </Button>
+                                    </div>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>

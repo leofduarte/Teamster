@@ -8,6 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useEffect } from "react";
+import {router} from "@inertiajs/react";
 
 function Output({ resultadoResposta, onCloseModal, planActivityId }) {
     // Criação dos estados para cada texto editável
@@ -41,7 +42,6 @@ function Output({ resultadoResposta, onCloseModal, planActivityId }) {
     const [isEditingTarefasParticipantes, setIsEditingTarefasParticipantes] =
         useState(false);
 
-    // Função para salvar no localStorage
     const handleSave = async () => {
         const atividadeData =
             JSON.parse(localStorage.getItem("atividadeData")) || [];
@@ -59,7 +59,8 @@ function Output({ resultadoResposta, onCloseModal, planActivityId }) {
           novaAtividade,
           planatividadeid,
       });
-        console.log(response.data);
+        console.log("yooo");
+        console.log(response.data.data.id);
 
         // Verifica se a nova atividade já existe no localStorage
         const atividadeExistente = atividadeData.some(
@@ -72,11 +73,13 @@ function Output({ resultadoResposta, onCloseModal, planActivityId }) {
                 "atividadeData",
                 JSON.stringify(atividadeData)
             );
-            alert("Atividade salva com sucesso!");
+            router.get("/atividade/detalhes/"+response.data.data.id);
         } else {
             alert("A atividade já existe!");
         }
     };
+
+    console.log("horario", typeof horario, horario);
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">

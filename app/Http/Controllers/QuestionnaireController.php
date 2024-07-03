@@ -22,6 +22,22 @@ class QuestionnaireController extends Controller
 
         $questionnaire->save();
 
+        //add as 3 obrigatórias
+        $mandatoryQuestions = Question::where('is_mandatory', 1)->where('questionnaire_id', 1)->get();
+
+        foreach ($mandatoryQuestions as $mandatoryQuestion) {
+            $question = new Question();
+            $question->questionnaire_id = $questionnaire->id;
+            $question->label = $mandatoryQuestion->label;
+            $question->options = $mandatoryQuestion->options;
+            $question->type = $mandatoryQuestion->type;
+            $question->is_mandatory = $mandatoryQuestion->is_mandatory;
+            $question->save();
+        }
+        /*$question = new Question();
+        $question->questionnaire_id = $questionnaire->id;
+        $question->label = 'Como te sentes em relação a atividades físicas e desporto?';*/
+
         $questionnaire_id = $questionnaire->id;
         return response()->json([
             'questionnaire_id' => $questionnaire_id,
@@ -59,6 +75,10 @@ class QuestionnaireController extends Controller
     {
         $questionnaire = Questionnaire::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
         $questions = Question::where('questionnaire_id', $id)->get();
+
+        foreach ($questions as $question) {
+            $question->options = json_decode($question->options);
+        }
 
         return Inertia::render('EditQuestionnaire', ['questionnaire' => $questionnaire, 'questions' => $questions]);
     }

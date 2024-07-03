@@ -83,7 +83,7 @@ const AddResponse = ({questionnaire}) => {
         <div>
             <Layout sidebar={
                 <div
-                    className={"flex flex-col gap-4 h-screen justify-center items-center place-content-center w-screen"}>
+                    className={"flex flex-col gap-4 h-screen justify-center items-center place-content-center"}>
                     <div>
                         <Label>Participant ID</Label>
                         <Input className={""} type={"number"} label={"Participant ID"}

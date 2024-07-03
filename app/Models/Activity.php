@@ -18,4 +18,15 @@ class Activity extends Model
         'planner_tasks',
         'participant_tasks',
     ];
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    public function planActivity()
+    {
+        return $this->belongsTo(PlanActivity::class);
+    }
+
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   PointerSensor,
   DndContext,
@@ -220,8 +220,8 @@ const addOption = () => {
               <div>
                   <Button onClick={() => setShowInput(prevShowInput => !prevShowInput)} className={"mb-2"}
                           variant={"generate"}>
-                      <FontAwesomeIcon icon={faWandMagicSparkles}/>
-                      <span className={"ms-2"}>Generate</span>
+                      <FontAwesomeIcon className={"text-white"} icon={faWandMagicSparkles}/>
+                      <span className={"ms-2 text-white"}>Generate</span>
                   </Button>
 
                   {showInput && (

@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import { PointerSensor, DndContext, useSensor, useSensors } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -29,7 +29,13 @@ function AddTextForm({ isModalOpen, setIsModalOpen, currentItem, setCurrentItem,
             askAPI: askAPI,
         });
         console.log(response.data);
-        setCurrentItem({...currentItem, tooltip: response.data.tooltip, placeholder: response.data.placeholder ,description: response.data.description, label: response.data.label});
+        setCurrentItem({
+            ...currentItem,
+            tooltip: response.data.tooltip,
+            placeholder: response.data.placeholder ,
+            description: response.data.description,
+            label: response.data.label
+        });
         setCurrentItem.description = response.data.description;
         setCurrentItem.placeholder = response.data.placeholder;
         setCurrentItem.label = response.data.label;
@@ -106,11 +112,19 @@ function AddTextForm({ isModalOpen, setIsModalOpen, currentItem, setCurrentItem,
   return (
       <>
           <DndContext sensors={sensors}  onDragEnd={handleDragEnd}>
-          <SortableContext items={items.filter(Boolean).map(item => item.id)} strategy={verticalListSortingStrategy}>
-            {items.map((item) => item && (
-                <SortItem key={item.id} id={item.id} item={item} onInputChange={handleInputChange} onEditItem={handleEditItem}   handleDeleteItem={handleDeleteItem} className={"m-4"} />
-          ))}
-          </SortableContext>
+              <SortableContext items={items.filter(Boolean).map(item => item.id)} strategy={verticalListSortingStrategy}>
+                    {items.map((item) => item && (
+                        <SortItem
+                                key={item.id}
+                                id={item.id}
+                                item={item}
+                                onInputChange={handleInputChange}
+                                onEditItem={handleEditItem}
+                                handleDeleteItem={handleDeleteItem}
+                                className={"m-4"}
+                        />
+                  ))}
+              </SortableContext>
         </DndContext>
 
         {currentItem && (
@@ -122,8 +136,8 @@ function AddTextForm({ isModalOpen, setIsModalOpen, currentItem, setCurrentItem,
                 <div className={""}>
                     <Button onClick={() => setShowInput(prevShowInput => !prevShowInput)} className={"mb-2"}
                             variant={"generate"}>
-                        <FontAwesomeIcon icon={faWandMagicSparkles}/>
-                        <span className={"ms-2"}>Generate</span>
+                        <FontAwesomeIcon className={"text-white"} icon={faWandMagicSparkles}/>
+                        <span className={"ms-2 text-white"}>Generate</span>
                     </Button>
 
                     {showInput && (

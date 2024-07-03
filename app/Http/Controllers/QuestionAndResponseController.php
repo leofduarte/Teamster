@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Question;
 use App\Models\Response;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 
 class QuestionAndResponseController
 {
@@ -109,7 +110,6 @@ class QuestionAndResponseController
     {
         $questions = $request->input('items');
         $questionnaire_id = $request->input('questionnaire_id');
-        $is_mandatory = $request->input('is_mandatory');
 
         $validator = Validator::make($request->all(), [
             'items.*.type' => 'required|string',
@@ -120,7 +120,6 @@ class QuestionAndResponseController
             'items.*.options' => 'required_if:items.*.type,radio|array',
             'items.*.is_mandatory' => 'required|boolean', // Add this line
             'questionnaire_id' => 'required|integer',
-            'is_mandatory' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -130,20 +129,65 @@ class QuestionAndResponseController
             ], 400);
         }
 
-        foreach ($questions as $question) {
-            Question::create([
-                'type' => $question['type'],
-                'label' => $question['label'],
-                'placeholder' => $question['placeholder'] ?? null,
-                'tooltip' => $question['tooltip'] ?? null,
-                'description' => $question['description'] ?? null,
-                'options' => isset($question['options']) && !empty($question['options']) ? json_encode($question['options']) : null,
-                'questionnaire_id' => $questionnaire_id,
-                'is_mandatory' => $question['is_mandatory'], // Add this line
-            ]);
+        $idsUsed = Question::where('questionnaire_id', $questionnaire_id)
+            ->where('is_mandatory', 0)
+            ->pluck('id')
+            ->toArray();
+        //dd($idsUsed);
+
+        foreach ($questions as $index => $question) {
+            //remove from array $idsUsed the $question->id
+            if (($key = array_search($question['id'], $idsUsed)) !== false) {
+                unset($idsUsed[$key]);
+            }
+            if(gettype($question['id']) == 'string'){
+                Question::Create([
+                    'type' => $question['type'],
+                    'label' => $question['label'],
+                    'placeholder' => $question['placeholder'] ?? null,
+                    'tooltip' => $question['tooltip'] ?? null,
+                    'description' => $question['description'] ?? null,
+                    'options' => isset($question['options']) && !empty($question['options']) ? json_encode($question['options']) : null,
+                    'questionnaire_id' => $questionnaire_id,
+                    'is_mandatory' => $question['is_mandatory'], // Add this line
+                ]);
+            }else {
+                if($question['id'] > 10){
+                    Question::updateOrCreate([
+                        'id' => $question['id'],
+                        ],[
+                            'type' => $question['type'],
+                            'label' => $question['label'],
+                            'placeholder' => $question['placeholder'] ?? null,
+                            'tooltip' => $question['tooltip'] ?? null,
+                            'description' => $question['description'] ?? null,
+                            'options' => isset($question['options']) && !empty($question['options']) ? json_encode($question['options']) : null,
+                            'questionnaire_id' => $questionnaire_id,
+                            'is_mandatory' => $question['is_mandatory'], // Add this line
+                        ]);
+                }else{
+                    Question::Create([
+                        'type' => $question['type'],
+                        'label' => $question['label'],
+                        'placeholder' => $question['placeholder'] ?? null,
+                        'tooltip' => $question['tooltip'] ?? null,
+                        'description' => $question['description'] ?? null,
+                        'options' => isset($question['options']) && !empty($question['options']) ? json_encode($question['options']) : null,
+                        'questionnaire_id' => $questionnaire_id,
+                        'is_mandatory' => $question['is_mandatory'], // Add this line
+                    ]);
+                }
+            }
         }
 
-        return response()->json(['message' => 'Questions added successfully'], 201);
+        if(count($idsUsed) > 0){
+            Question::where('questionnaire_id', $questionnaire_id)
+            ->whereIn('id', $idsUsed)
+            ->delete();
+        }
+        //return Inertia::render('EditQuestionnaire', ['questionnaire_id' => $questionnaire_id]);
+
+        return response()->json(['message' => 'Questions updated successfully'], 201);
     }
 
     public function getQuestion(Request $request)
@@ -213,5 +257,9 @@ class QuestionAndResponseController
         return response()->json(['message' => 'Responses added successfully'], 201);
     }
 
-
+    public function getAllResponses()
+    {
+        $responses = Response::all();
+        return response()->json($responses);
+    }
 }

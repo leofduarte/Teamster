@@ -14,11 +14,23 @@ class InvitationController extends Controller
     public function sendInvitation(Request $request)
     {
         $token = Str::random(32);
-        $invitation = Invitation::create([
-            'email' => $request->email,
-            'team_id' => $request->team_id,
-            'token' => $token,
-        ]);
+
+        //check if participant already exists
+        $participant = Participant::where('email', $request->email)->first();
+
+        if($participant){
+            $invitation = Invitation::create([
+                'email' => $request->email,
+                'team_id' => $request->team_id,
+                'token' => $token,
+            ]);
+        }else{
+            $invitation = Invitation::create([
+                'email' => $request->email,
+                'team_id' => $request->team_id,
+                'token' => $token,
+            ]);
+        }
 
         $invitationLink = url("/invite/{$token}");
 
@@ -38,12 +50,12 @@ class InvitationController extends Controller
     {
         $invitation = Invitation::where('token', $request->token)->firstOrFail();
 
-        $participant = Participant::create([
-            'email' => $invitation->email,
-            'team_id' => $invitation->team_id,
-            'invitation_token' => $invitation->token,
-            'questionnaire_data' => json_encode($request->questionnaire_data),
-        ]);
+//        $participant = Participant::create([
+//            'email' => $invitation->email,
+//            'team_id' => $invitation->team_id,
+//            'invitation_token' => $invitation->token,
+//            'questionnaire_data' => json_encode($request->questionnaire_data),
+//        ]);
 
         $invitation->update(['is_invitation_accepted' => true]);
 
@@ -52,9 +64,18 @@ class InvitationController extends Controller
 
     public function acceptInvitation(Request $request, $token)
     {
+
+
         $invitation = Invitation::where('token', $token)->firstOrFail();
 
-        $invitation->delete();
+        $participant = Participant::where('email', $request->email)->firstOrFail();
+
+        dd($invitation);
+
+        //$invitation->delete();
+
+
+
 
         return response()->json(['message' => 'You have successfully joined the team.']);
     }

@@ -22,4 +22,15 @@ class Team extends Model
     {
         return $this->belongsTo(Department::class);
     }
+
+    public function planActivities()
+{
+    return $this->hasMany(PlanActivity::class);
+}
+
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
 }

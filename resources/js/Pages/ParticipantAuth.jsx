@@ -24,7 +24,7 @@ function ParticipantAuth() {
             }
         } else {
             try {
-                const response = await axios.post('/api/v1/participantauth/verify', { email, code });
+                const response = await axios.post('participantauth/verify', { email, code });
                 console.log(response.data);
                     console.log('Login successful');
                 Inertia.visit('/participant');
@@ -40,8 +40,8 @@ function ParticipantAuth() {
                     <img className="z-50 fixed h-[10%] w-auto" src={logo} alt="Logo"/>
                 </div>
 
-                <div className="z-10 flex items-center justify-center min-h-screen bg-[#F8F7FC]">
-                    <div className=" z-10 p-8 bg-white rounded-[2rem] shadow-lg">
+                <div className="z-10 flex place-content-center justify-center bg-[#F8F7FC]">
+                    <div className=" z-10 p-8 bg-white rounded-[2rem] shadow-lg min-h-[300px] min-w-96  place-content-center">
                         <h1 className="mb-6 text-2xl font-serif text-center text-gray-700 uppercase">Iniciar Sessão</h1>
                         <form onSubmit={handleSubmit}>
                             {!emailSent ? (
@@ -54,8 +54,10 @@ function ParticipantAuth() {
                                 </>
                             ) : (
                                 <>
-                                    <p>Enter the code generated from the link sent to <br/> <span
-                                        className={"font-bold"}>{email}</span></p>
+                                    <p>Enter the code generated from the link sent to
+                                        <br/>
+                                        <span className={"font-bold"}>{email}</span>
+                                    </p>
                                     <Input type="number" value={code} placeholder={"Enter verification code"}
                                            onChange={e => setCode(e.target.value)}/>
                                     <Button type="submit">

@@ -1,10 +1,13 @@
 <?php
 
-use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\Auth\ParticipantAuth\ParticipantAuthController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\TeamController;
+use App\Http\Middleware\CheckQuest;
 use App\Models\Team;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -19,31 +22,38 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('DashboardPage');
-})
-    ->middleware(['auth'])
-    ->name('dashboard');
+Route::get('/dashboard', function() {
+    $teams = Team::whereIn('department_id', auth()->user()->departments->pluck('id'))
+        ->with(['participants' => function($query) {
+            $query->withPivot('status_id');
+        }])
+        ->with('department')
+        ->orderBy('teams.name')
+        ->get();
 
-Route::get('/landing', function(){
+    return Inertia::render('DashboardPage', [
+        'teams' => $teams,]);
+});
+
+Route::get('/landing', function () {
     return Inertia::render('LandingPage');
 });
 
-Route::get('/invite', function(){
+Route::get('/invite', function () {
     return Inertia::render('InviteForm');
 });
 
-Route::post('/newfeedback', function(){
+Route::post('/newfeedback', function () {
     return Inertia::render('FeedbackQuestionnaire', [
         'newquestionnaire_id' => request()->questionnaire_id
-    ]   );
+    ]);
 })->middleware('auth');
 
-Route::get('/feedback', function(){
+Route::get('/feedback', function () {
     return Inertia::render('AllFeedbackQuestionnaires');
 })->middleware('auth');
 
-Route::get('/questionnaire', function(){
+Route::get('/questionnaire', function () {
     return Inertia::render('Questionnaire');
 })->middleware('auth');
 
@@ -61,7 +71,7 @@ Route::get('/teams', function () {
 
     $departments = auth()->user()->departments;
     $teams = Team::whereIn('department_id', auth()->user()->departments->pluck('id'))
-        ->with(['participants' => function($query) {
+        ->with(['participants' => function ($query) {
             $query->withPivot('status_id');
         }])
         ->with('department')
@@ -91,39 +101,51 @@ Route::get('/addresponse', function () {
 
 Route::get('/invite/{token}', [InvitationController::class, 'acceptInvitation']);
 
-Route::get('/invite2', function(){
+Route::get('/invite2', function () {
     return Inertia::render('InviteForm2');
 })->middleware('auth')->name('inviteform');
 
-Route::get('/atividade', function() {
+Route::get('/atividade', function () {
     return Inertia::render('Plan_activity');
 })->middleware('auth')->name('atividade');
 
-Route::get('/participantauth', function() {
+Route::get('/atividade/{id}', function () {
+    return Inertia::render('Activity');
+})->middleware('auth')->name('Activity');
+
+Route::get('/atividade/detalhes/{id}', [ActivityController::class, 'show']);
+
+Route::get('/atividade/{id}', [ActivityController::class, 'redoActivity']);
+
+Route::get('/participantauth', function () {
     return Inertia::render('ParticipantAuth');
 });
 
+Route::post('/participantauth/verify', [ParticipantAuthController::class, 'verifyCode']);
+
 Route::get('/participant', function() {
-    return Inertia::render('ParticipantLayout');
-});
+    return Inertia::render('ParticipantLayout', [ 'user_id' => auth()->guard('participants')->user()->id]);
+})->name('participant')->middleware(CheckQuest::class);
 
 Route::get('/participantprofile', function() {
     return Inertia::render('ProfilePage');
 });
 
-
-
-
 Route::get('/partners', function () {
     return Inertia::render('Partners');
 })->middleware('auth')->name('partners');
 
-/*Route::get('/employeeform' , function(){
-    return Inertia::render('EmployeeForm');
-})->middleware('auth')->name('employeeform');
+Route::get('/participantquest', function () {
+    return Inertia::render('Quizz', [
+        'user_id' => auth()->guard('participants')->user()->id
+    ]);
+})->name('participantquest')->middleware(CheckQuest::class);
 
-Route::get('/render_employeeform', [ItemController::class, 'index'])
-    ->middleware('auth')->name('render_employeeform');*/
+Route::get('/atividade/{id}/pdf', [PdfController::class, 'generatePdf']);
+
+Route::get('/who', function () {
+       return Inertia::render('ManagerOrParticipant');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -131,4 +153,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::get('atividade/{id}/sendinvite', [ActivityController::class, 'sendInvite']);
+
+require __DIR__ . '/auth.php';

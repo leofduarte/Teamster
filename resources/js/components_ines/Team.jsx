@@ -1,66 +1,121 @@
-import React, { useState, useEffect } from 'react';
-import teamData from '../data/team.json';
+import React, { useEffect, useState } from "react";
 import { ScrollArea } from "@/Components/ui/scroll-area";
-import Image1 from '../../../storage/app/public/images/rui-jorge.jpg';
-import Image2 from '../../../storage/app/public/images/andre-santos.jpg';
-import Image3 from '../../../storage/app/public/images/ricardo-guedes.jpg';
-import Image4 from '../../../storage/app/public/images/rita-sampaio.jpg';
-import Image5 from '../../../storage/app/public/images/marta-pereira.jpg';
-import Image6 from '../../../storage/app/public/images/ana-silva.jpg';
-import Image7 from '../../../storage/app/public/images/tiago-fernandes.jpg';
+import axios from "axios";
 
-const images = [Image1, Image2, Image3, Image4, Image5, Image6, Image7];
+function Team({ teams, id, onTeamSelect }) {
+    const [selectedTeamIndex, setSelectedTeamIndex] = useState(0);
+    const [showTeamList, setShowTeamList] = useState(false);
+    const [allParticipants, setAllParticipants] = useState([]);
 
-function Team() {
-  const [team, setTeam] = useState([]); // Estado para armazenar os dados da equipa
-  const loggedInUser = "André Santos"; // Nome do utilizador logado
+    useEffect(() => {
+        const fetchParticipants = async () => {
+            try {
+                const response = await axios.post(
+                    `api/v1/getParticipantsFromTeams`,
+                    { teamId: id }
+                );
+                setAllParticipants(response.data);
+            } catch (error) {
+                console.error("Failed to fetch participants:", error);
+            }
+        };
+        fetchParticipants();
+    }, [id]);
 
-  // Simulação de uma chamada à base de dados para obter os dados da equipa
-  const fetchTeamData = () => {
-      setTeam(teamData); // Atualiza o estado com os dados da equipa
-  };
+    useEffect(() => {
+        if (teams && teams.length > 0) {
+            onTeamSelect(teams[selectedTeamIndex]);
+        }
+    }, [selectedTeamIndex, teams, onTeamSelect]);
 
-  // useEffect para chamar a função de simulação quando o componente é montado
-  useEffect(() => {
-    fetchTeamData();
-  }, []);
-
-  // Função para filtrar e remover o utilizador logado da lista da equipa
-  const filterMembers = (members) => {
-    return members.filter(member => member.name !== loggedInUser);
-  };
-
-  return (
-    <div className="bg-white drop-shadow-md rounded-lg text-center p-5 joyride-team">
-      <h2 className="text-2xl font-bold mb-3 font-manjari">A SUA EQUIPA</h2>
-      <div className="flex items-center justify-center flex-col">
-        {team.map((team) => (
-          <div key={team.id} className="w-full max-w-md mb-5">
-            <div className="mb-3">
-              <p className="font-manjari mt-2 text-xl font-semibold text-left">{team.title}</p>
+    if (!teams || teams.length === 0) {
+        return (
+            <div className="bg-white drop-shadow-md rounded-lg text-center p-5 ">
+                <h2 className="text-2xl font-bold mb-3 font-serif">
+                    Neste momento não há equipas disponíveis
+                </h2>
             </div>
-            <ScrollArea className="h-72 w-full rounded-md border overflow-y-auto">
-              {filterMembers(team.members).map((member) => (
-                <div key={member.id} className="flex items-center mb-4 px-3">
-                  <div className="relative group cursor-pointer flex-shrink-0 mr-3">
-                      <div
-                          className="rounded-full border-solid border-2 border-gray-300 w-10 h-10 flex items-center justify-center">
-                          <img
-                              className="rounded-full w-full h-full object-cover"
-                              src={`../../../storage/app/public/images/${member.image}`}
-                              alt={member.name}
-                          />
-                      </div>
-                  </div>
-                    <p className="text-left">{member.name}</p>
+        );
+    }
+
+    const selectedTeam = teams[selectedTeamIndex];
+
+    const handleMoreClick = () => {
+        setShowTeamList(true);
+    };
+
+    const handleTeamSelect = (index) => {
+        setSelectedTeamIndex(index);
+        setShowTeamList(false);
+        if (onTeamSelect) {
+            onTeamSelect(teams[index]);
+        }
+    };
+
+    if (showTeamList) {
+        return (
+            <div className="bg-white drop-shadow-md rounded-lg text-center p-5 ">
+                <h2 className="text-2xl font-bold mb-3 font-serif">
+                    SELECIONE UMA EQUIPA
+                </h2>
+
+                {teams.map((team, index) => (
+                    <div
+                        key={team.id}
+                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleTeamSelect(index)}
+                    >
+                        {team.name}
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    const selectedTeamParticipants =
+        allParticipants.find((team) => team.id === selectedTeam.id)
+            ?.participants || [];
+
+    return (
+        <div className="bg-white drop-shadow-md rounded-lg text-center p-5 joyride-team">
+            <h2 className="text-2xl font-bold mb-3 font-serif">A SUA EQUIPA</h2>
+
+            <div className="flex items-center justify-center flex-col">
+                <div key={selectedTeam.id} className="w-full max-w-md mb-5">
+                    <div className="mb-3">
+                        <p className=" mt-2 text-xl  text-left">
+                            {selectedTeam.name}
+                        </p>
+                    </div>
+                    <ScrollArea className="h-72 w-full  overflow-y-auto p-1">
+                        {selectedTeamParticipants.map((participant) => (
+                            <div
+                                key={participant.id}
+                                className="flex items-center px-2"
+                            >
+                                <div className="flex-shrink-0 mr-2">
+                                    <img
+                                        className="rounded-full h-10"
+                                        src={`https://api.dicebear.com/8.x/big-smile/svg?seed=${participant.email}`}
+                                        alt={participant.name}
+                                    />
+                                </div>
+                                <p className="text-left text-sm">
+                                    {participant.email}
+                                </p>
+                            </div>
+                        ))}
+                    </ScrollArea>
                 </div>
-              ))}
-            </ScrollArea>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+                <button
+                    onClick={handleMoreClick}
+                    className=" text-gray-500  hover:text-black self-start"
+                >
+                    Mais equipas
+                </button>
+            </div>
+        </div>
+    );
 }
 
 export default Team;

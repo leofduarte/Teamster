@@ -11,7 +11,7 @@ function Checkbox_CP({ id, item, onInputChange, onEditItem, handleDeleteItem, se
         <div className="flex items-center justify-between">
             <div className="flex items-center">
                 {showGrab && (
-                <button className="mr-6 cursor-grab">
+                <button type="button" className="mr-6 cursor-grab">
                     <FontAwesomeIcon
                         ref={setNodeRef}
                         {...attributes}

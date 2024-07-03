@@ -13,7 +13,7 @@ class PlanActivityController extends Controller
     public function SavePlanActivity(Request $request)
     {
         $request->validate([
-            'team_id' => 'required',
+            'team_id' => 'sometimes',
             'nome' => 'required',
             'dia' => 'required',
             'duracao' => 'required',
@@ -25,7 +25,7 @@ class PlanActivityController extends Controller
         ]);
 
         $planActivity = new PlanActivity;
-        $planActivity->team_id = $request->team_id;
+        $planActivity->team_id = $request->has('team_id') ? $request->team_id : null;
         $planActivity->name = $request->nome;
         $planActivity->duration = $request->duracao;
 
@@ -43,6 +43,8 @@ class PlanActivityController extends Controller
         if (!is_string($planActivity->objectives)) {
             return response()->json(['error' => 'Objectives encoding failed.'], 422);
         }
+
+
         // Note: 'numParticipantes' does not have a direct column, you might need to handle it differently
         // For example, storing it in a related table or as part of 'observations' or 'objectives'
         if (!is_string($planActivity->objectives)) {

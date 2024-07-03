@@ -27,7 +27,6 @@ class TeamController extends Controller
         ]);
     }
 
-
     public function addToTeam(Request $request)
     {
         $validatedData = $request->validate([
@@ -38,7 +37,7 @@ class TeamController extends Controller
         $department = Department::find($validatedData['department_id']);
 
         if (!$department) {
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(['message' => 'Department not found'], 404);
         }
 
         $existingTeam = $department->teams()->where('name', $validatedData['name'])->first();
@@ -53,55 +52,57 @@ class TeamController extends Controller
         return response()->json(['message' => 'Team created successfully', 'teamId' => $team->id]);
     }
 
-
     public function TeamPage($id, Request $request)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    $userDepartments = $user->departments()->with(['teams.participants' => function($query) {
-        $query->withPivot('status_id');
-    }, 'teams.department', 'teams.questionnaires'])->get();
+        $userDepartments = $user->departments()->with(['teams.participants' => function($query) {
+            $query->withPivot('status_id');
+        }, 'teams.department', 'teams.questionnaires', 'teams.planActivities', 'teams.planActivities.activities'])->get();
 
-    $team = null;
+        $team = null;
 
-    foreach ($userDepartments as $department) {
-        $team = $department->teams->where('id', $id)->first();
-        if ($team) {
-            break;
+        foreach ($userDepartments as $department) {
+            $team = $department->teams->where('id', $id)->first();
+            if ($team) {
+                break;
+            }
         }
+
+        if (!$team) {
+            return response()->json(['message' => 'Team not found'], 404);
+        }
+
+        $activities = $team->planActivities->map(function ($planActivity) {
+            return [
+                'activities' => $planActivity
+            ];
+        });
+
+        $participants = collect($team->participants)->flatten();
+
+        $page = $request->get('page', 1);
+
+        $paginatedParticipants = new LengthAwarePaginator(
+            $participants->forPage($page, 10),
+            $participants->count(),
+            10,
+            $page,
+            ['path' => url()->current()]
+        );
+
+        $countStatus3 = $team->participants()->wherePivot('status_id', 3)->count();
+        $userQuestionnaires = Auth::user()->questionnaires;
+
+        return Inertia::render('TeamPage', [
+            'team' => $team,
+            'participants' => $paginatedParticipants,
+            'countStatus3' => $countStatus3,
+            'questionnaires' => $team->questionnaires,
+            'userQuestionnaires' => $userQuestionnaires,
+            'activities' => $activities
+        ]);
     }
-
-    if (!$team) {
-        return response()->json(['message' => 'Team not found'], 404);
-    }
-
-    // Flatten the participants array
-    $participants = collect($team->participants)->flatten();
-
-    // Get current page from request, if not set default to 1
-    $page = $request->get('page', 1);
-
-    // Create a new LengthAwarePaginator instance
-    $paginatedParticipants = new LengthAwarePaginator(
-        $participants->forPage($page, 10), // Items for current page
-        $participants->count(), // Total items
-        10, // Items per page
-        $page, // Current page
-        ['path' => url()->current()] // Page url
-    );
-
-    $countStatus3 = $team->participants()->wherePivot('status_id', 3)->count();
-    $userQuestionnaires = Auth::user()->questionnaires;
-
-
-    return Inertia::render('TeamPage', [
-        'team' => $team,
-        'participants' => $paginatedParticipants,
-        'countStatus3' => $countStatus3,
-        'questionnaires' => $team->questionnaires,
-        'userQuestionnaires' => $userQuestionnaires
-    ]);
-}
 
     /*public function getTeamsAndParticipants(Request $request)
     {
@@ -140,6 +141,8 @@ class TeamController extends Controller
 
     public function addParticipantToTeam(Request $request, $teamId)
     {
+
+        dd( "NOT USED TEAMCONTROLLER ADDPARTICIPANTTOTEAM");
         $validatedData = $request->validate([
             'email' => 'required|email',
             'name' => 'string|nullable',
@@ -157,8 +160,11 @@ class TeamController extends Controller
             return response()->json(['message' => 'Participant already exists in the team'], 409);
         }
 
-        $participant = new Participant($validatedData);
-        $participant->save();
+        $participant = Participant::where('email', $validatedData['email'])->first();
+        if(!$participant){
+            $participant = new Participant($validatedData);
+            $participant->save();
+        }
         $participant->teams()->attach($teamId);
 
         return response()->json(['message' => 'Participant added to team successfully']);
@@ -167,25 +173,29 @@ class TeamController extends Controller
     public function addMultipleParticipantsToTeam(Request $request, $teamId)
     {
         $team = Team::find($teamId);
+        $emails = $request->input('emails');
 
         if (!$team) {
             return response()->json(['message' => 'Team not found'], 404);
         }
-
-        $emails = $request->input('emails');
 
         if (!is_array($emails)) {
             return response()->json(['message' => 'The emails input is required and should be an array.'], 400);
         }
 
         foreach ($emails as $email) {
+
             $existingParticipant = $team->participants()->where('email', $email)->first();
             if ($existingParticipant) {
                 continue;
             }
 
-            $participant = new Participant(['email' => $email]);
-            $participant->save();
+            $participant = Participant::where('email', $email)->first();
+            if(!$participant){
+                $participant = new Participant();
+                $participant->email = $email;
+                $participant->save();
+            }
             $participant->teams()->attach($teamId);
         }
 
@@ -225,8 +235,6 @@ class TeamController extends Controller
 
         return response()->json(['message' => 'Email validation successful. No duplicates found.', 'emails' => $emails], 200);
     }
-
-
 
     public function storeUniqueEmails(Request $request)
     {
@@ -336,5 +344,17 @@ class TeamController extends Controller
 
         return response()->json($teams);
 
+    }
+
+    public function getTeamsByParticipantId($id)
+    {
+        try {
+            $participant = Participant::findOrFail($id);
+            $teams = $participant->teams; // Assuming you have a teams relationship
+            return response()->json(['teams' => $teams], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching teams: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch teams'], 500);
+        }
     }
 }

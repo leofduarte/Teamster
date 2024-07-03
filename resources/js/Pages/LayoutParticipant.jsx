@@ -8,8 +8,8 @@ import { Button } from "@/Components/ui/button";
 import ParticipantProfileSettings from "@/components_ines/ParticipantProfileSettings.jsx";
 // import { Link } from 'react-router-dom';
 
-const LayoutParticipant = ({ children, hasRightSidebar = true, hasBottomSection = true, backButton = false }) => {
-
+const LayoutParticipant = (props, { children, hasRightSidebar = true, hasBottomSection = true, backButton = false }) => {
+console.log("LayoutParticipant props:", props); 
 
   return (
     <div className="min-h-screen bg-[#F8F7FC] flex flex-col items-center p-8 font-poppins">
@@ -43,7 +43,7 @@ const LayoutParticipant = ({ children, hasRightSidebar = true, hasBottomSection 
                 <ParticipantProfileSettings />
             </div>
             <div className="joyride-team">
-              <Team />
+              <Team ParticipantProps={props} />
             </div>
           </div>
         )}

@@ -136,23 +136,42 @@ const AddCheckboxForm = ({
             >
                 <h2 className="text-center text-xl text-black">Configure Input</h2>
 
-                <div className={""}>
-                <Button onClick={() => setShowInput(prevShowInput => !prevShowInput)} className={"mb-2"} variant={"generate"}>
-                    <FontAwesomeIcon icon={faWandMagicSparkles}/>
-                    <span className={"ms-2"}>Generate</span>
-                </Button>
-
-                {showInput && (
-                    <div className={"flex"}>
-                        <Input type={"text"} name={"askAPI"} id={"askAPI"} placeholder={"Enter a description of the question you need, and our AI will help you!"} value={askAPI} onChange={(e) => {
-                            setAskAPI(e.target.value)
-                        }}/>
-                        <Button variant={"outline"} onClick={handleSubmitAPI}>ask</Button>
-                    </div>)
-                }
+                <div className="relative flex items-center">
+                    <div className={"gap-2"}>
+                        <Button
+                            onClick={() => setShowInput(prevShowInput => !prevShowInput)}
+                            className="z-10 transition-all duration-300 ease-in-out flex items-center"
+                            variant="generate"
+                            style={{width: showInput ? '40px' : 'auto'}}
+                        >
+                            <FontAwesomeIcon className="text-white" icon={faWandMagicSparkles}/>
+                            <span
+                                className={`text-white overflow-hidden transition-all duration-300 ease-in-out ${showInput ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
+                                                          Generate
+                                                    </span>
+                        </Button>
+                    </div>
+                    <div
+                        className={`absolute left-0 flex items-center transition-all duration-300 ease-in-out ${
+                            showInput ? 'translate-x-[44px] opacity-100' : 'translate-x-0 opacity-0 pointer-events-none'
+                        }`}
+                    >
+                        <Input
+                            type="text"
+                            name="askAPI"
+                            id="askAPI"
+                            value={askAPI}
+                            placeholder="Enter a description of the question you need, and our AI will help you!"
+                            onChange={(e) => setAskAPI(e.target.value)}
+                            className="w-full mr-2"
+                        />
+                        <Button variant="outline" onClick={() => handleSubmitAPI(currentItem)}>
+                            Ask
+                        </Button>
+                    </div>
                 </div>
 
-                <Separator className={"my-8"} />
+                <Separator className={"my-8"}/>
 
                 <form onSubmit={handleSubmitCheck}>
                     <label className={"text-black"}>

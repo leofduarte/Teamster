@@ -9,17 +9,18 @@ import {Checkbox} from "@/Components/ui/checkbox.jsx";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/Components/ui/tooltip.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleInfo} from "@fortawesome/free-solid-svg-icons";
-import {router} from "@inertiajs/react";
 
-const AddParticipantToTeam = ({teamId, fetchTeamsAndParticipants, setParticipantEmail, onClose}) => {
+const AddParticipantToTeam = ({teamId, onClose}) => {
     const [participantEmails, setParticipantEmails] = useState([]);
     const [emailInput, setEmailInput] = useState('');
     const [showGetEmailExcel, setShowGetEmailExcel] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleAddEmail = () => {
         if (emailInput) {
             setParticipantEmails([...participantEmails, {email: emailInput}]);
             setEmailInput('');
+            setErrorMessage('');
         }
     };
 
@@ -40,30 +41,24 @@ const AddParticipantToTeam = ({teamId, fetchTeamsAndParticipants, setParticipant
                 });
             console.log(teamResponse);
 
-
             toast({
                 variant: "success",
                 title: "Success!",
                 description: `${participantData.email} has been added to the team.`,
             });
-
             // Send email invitations
             participantEmails.forEach(emailObj => {
                 axios.post('/api/v1/invite', { email: emailObj.email, team_id: teamId })
                     .then(response => {
                         console.log(response.data);
-
                     })
                     .catch(error => {
                         console.error('Error:', error);
                     });
             });
-
-            //router.get('/teams');
-            // fetchTeamsAndParticipants();
-            // setParticipantEmail('');
         } catch (error) {
             console.error('Error adding participant:', error);
+            setErrorMessage(error.message);
             toast({
                 variant: "destructive",
                 title: "Error!",
@@ -112,6 +107,7 @@ const AddParticipantToTeam = ({teamId, fetchTeamsAndParticipants, setParticipant
                             <Button variant={"secondary"} className={"ms-2"} type="button" onClick={handleAddEmail}>
                                 Add Email
                             </Button>
+                            {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
                         </div>
 
                         <div className="flex items-center space-x-2 mt-4">

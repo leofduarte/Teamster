@@ -1,17 +1,24 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import ModalButtons from "@/Components/EmployeeForm/ModalButtons.jsx";
-import AddTextForm from "@/Components/EmployeeForm/AddTextForm.jsx";
-import AddCheckboxForm from "@/Components/EmployeeForm/AddCheckboxForm.jsx";
-import AddRadioForm from "@/Components/EmployeeForm/AddRadioForm.jsx";
 import {Head} from "@inertiajs/react";
 import {Button} from "../Components/ui/button.jsx";
 import {Input} from "@/Components/ui/input.jsx";
 import {Layout} from "@/Pages/Layout.jsx";
-import Modal from "@/Components/Modal.jsx";
 import Text_CP from "@/Components/EmployeeForm/InputsComponents/Text_cp.jsx";
 import Checkbox_CP from "@/Components/EmployeeForm/InputsComponents/Checkbox_cp.jsx";
 import Radio_CP from "@/Components/EmployeeForm/InputsComponents/Radio_cp.jsx";
 import {toast} from "@/Components/ui/use-toast.js";
+import {arrayMove, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import SortItem from "@/Components/EmployeeForm/SortItem.jsx";
+import {DndContext, PointerSensor, useSensor, useSensors} from "@dnd-kit/core";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
+import {Separator} from "@/Components/ui/separator.jsx";
+import Modal from "../Components/Modal.jsx";
+import CheckboxForm from "@/Components/EmployeeForm/CheckboxForm.jsx";
+import TextForm from "@/Components/EmployeeForm/TextForm.jsx";
+import RadioForm from "@/Components/EmployeeForm/RadioForm.jsx";
+
 
 const EditQuestionnaire = ({questionnaire, questions}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,6 +28,15 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
     const [errorMessage, setErrorMessage] = useState(null);
     const [question, setQuestion] = useState([]);
     const [isWatchFormModalOpen, setIsWatchFormModalOpen] = useState(false);
+    const [showInput, setShowInput] = useState(false);
+    const [askAPI, setAskAPI] = useState("");
+    const [responseAPI, setResponseAPI] = useState("");
+    const [options, setOptions] = useState(currentItem?.options || [
+        {id: "option-1", label: ""},
+        {id: "option-2", label: ""},
+        {id: "option-3", label: ""},
+        {id: "option-4", label: ""},
+    ]);
 
     const handleInputChange = (id, value) => {
         setItems(prevItems => prevItems.map(item => item.id === id ? {...item, value} : item));
@@ -28,6 +44,9 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
 
     const handleAddItem = (type) => {
         const id = Math.random().toString(36).substr(2, 9);
+
+        setIsModalOpen(true);
+
         const newItem = {
             id,
             type,
@@ -38,14 +57,14 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
             description: "",
             isFetched: false,
         };
-        setItems(prevItems => {
+        setCurrentItem(newItem);
+
+        /*setItems(prevItems => {
             if (prevItems.some(item => item.id === id)) {
                 return prevItems;
             }
             return [...prevItems, newItem];
-        });
-        setCurrentItem(newItem);
-        setIsModalOpen(true);
+        });*/
     };
 
     const handleDeleteItem = (id) => {
@@ -65,16 +84,19 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
 
     const handleSubmitFormToDB = async (e) => {
         e.preventDefault();
+
         try {
             const allQuestions = [...items, ...question].map(item => ({
                 ...item,
-                options: Array.isArray(item.options) ? item.options : [item.options],
-                is_mandatory: item.is_mandatory || false,
+                options: item?.options?.length ? item.options : [],
+                is_mandatory: !!item?.is_mandatory,
             }));
-            const response = await axios.post('/api/v1/add-update-questions', {
-                items: allQuestions,
+
+            console.log(allQuestions.filter(e => !e.is_mandatory));
+
+            const response = await axios.post('/api/v1/addquestions', {
+                items: allQuestions.filter(e => !e.is_mandatory),
                 questionnaire_id: questionnaire_id,
-                is_mandatory: true,
             });
             toast({
                 variant: "success",
@@ -82,6 +104,7 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
                 description: `${response.data.message}`,
             });
         } catch (error) {
+            console.log(error)
             if (error.response.status === 422 || error.response.status === 400) {
                 setErrorMessage("Please fill out the Input.");
                 toast({
@@ -95,11 +118,15 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
     };
 
     const handleWatchForm = () => {
+
         setIsWatchFormModalOpen(true);
+        console.log("Watch form clicked")
+        console.log(isWatchFormModalOpen);
     };
 
     const handleEditItem = (id) => {
         const itemToEdit = items.find((item) => item.id === id) || questions.find((question) => question.id === id);
+
         if (itemToEdit) {
             setCurrentItem(itemToEdit);
             setIsModalOpen(true);
@@ -116,8 +143,10 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
         if (questions) {
             const mandatoryQuestions = questions.filter(question => question.is_mandatory);
             const nonMandatoryQuestions = questions.filter(question => !question.is_mandatory);
+
             setItems(nonMandatoryQuestions);
             setQuestion(mandatoryQuestions);
+
         }
     }, [questions]);
 
@@ -127,8 +156,88 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
         }
     }, [questionnaire_id]);
 
-    console.log("items", items);
-    console.log("question", question);
+    useEffect(() => {
+        console.log("currentItem", currentItem)
+    }, [currentItem]);
+
+
+    const pointerSensor = useSensor(PointerSensor, {
+        activationConstraint: {
+            delay: 250,
+            tolerance: 5,
+        },
+    });
+
+    const sensors = useSensors(pointerSensor);
+
+    const handleDragEnd = (event) => {
+        const {active, over} = event;
+
+        if (active && over && active.id !== over.id) {
+            setItems((items) => {
+                const oldIndex = items.findIndex((item) => item && item.id === active.id);
+                const newIndex = items.findIndex((item) => item && item.id === over.id);
+
+                return arrayMove(items, oldIndex, newIndex);
+            });
+        }
+    }
+
+    const handleSubmitAPI = async (item) => {
+        if (!item) return null;
+
+        const response = await axios.post(`/api/v1/${item.type}`, {askAPI: askAPI});
+
+        if (item.type === "text") {
+            setCurrentItem({
+                ...currentItem,
+                tooltip: response.data.tooltip,
+                placeholder: response.data.placeholder,
+                description: response.data.description,
+                label: response.data.label
+            });
+        } else if (item.type === "checkbox") {
+            setCurrentItem({
+                ...currentItem,
+                tooltip: response.data.tooltip,
+                description: response.data.description,
+                label: response.data.label
+            });
+        } else if (item.type === "radio") {
+            const mappedOptions = Array.isArray(response.data.options) ? response.data.options.map((option, index) => ({
+                id: `option-${index + 1}`,
+                label: option
+            })) : [];
+            setCurrentItem({...currentItem, label: response.data.label || '', options: mappedOptions});
+            setOptions(mappedOptions);
+            // setLabel(response.data.label || '');
+        }
+        setResponseAPI(response.data);
+    };
+
+    const handleModalSubmit = (value) => {
+        console.log("handleModalSubmit", value);
+
+        const existingItemIndex = items.findIndex(item => item.id === value.id);
+        if (existingItemIndex !== -1) {
+            setItems(prevItems => {
+                return prevItems.map((item, index) => {
+                    if (index === existingItemIndex) {
+                        // This is the item we want to update
+                        return value;
+                    } else {
+                        // This is not the item we want to update, leave it as is
+                        return item;
+                    }
+                });
+            });
+        } else {
+            setItems(prevItems => [...prevItems, value]);
+        }
+        setIsModalOpen(false);
+        setCurrentItem(null);
+    }
+
 
     return (
         <div>
@@ -204,130 +313,87 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
 
                                     <p>aqui vai ser o items</p>
 
-                                    {currentItem && (
-                                        <div>
-                                            {currentItem.type === 'text' && (
-                                                <AddTextForm isModalOpen={isModalOpen}
-                                                             setIsModalOpen={setIsModalOpen}
-                                                             currentItem={currentItem}
-                                                             setCurrentItem={setCurrentItem}
-                                                             handleUpdateItem={handleUpdateItem}
-                                                             items={items}
-                                                             setItems={setItems}
-                                                             handleDeleteItem={handleDeleteItem}
-                                                             showButtons={false}
+                                    {/* NEW */}
+                                    {items && items.length ?
+                                        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                                            <SortableContext items={items.filter(Boolean).map(item => item.id)}
+                                                             strategy={verticalListSortingStrategy}>
+                                                {items.map((item) => item && (
+                                                    <SortItem
+                                                        key={item.id}
+                                                        id={item.id}
+                                                        item={item}
+                                                        className={"m-4"}
+                                                        onInputChange={handleInputChange}
+                                                        onEditItem={handleEditItem}
+                                                        handleDeleteItem={handleDeleteItem}
+                                                    />
+                                                ))}
+                                            </SortableContext>
+                                        </DndContext>
+                                        : undefined
+                                    }
+
+                                    <Modal
+                                        ariaHideApp={false}
+                                        isOpen={isModalOpen}
+                                        onRequestClose={() => setIsModalOpen(false)}
+                                        appElement={document.getElementById('root')}>
+
+                                        <h2 className="text-center text-xl text-black">Configure Input</h2>
+
+                                        <div className="relative flex items-center">
+                                            <div className={"flex gap-2"}>
+                                                <Button
+                                                    onClick={() => setShowInput(prevShowInput => !prevShowInput)}
+                                                    className="z-10 transition-all duration-300 ease-in-out flex items-center"
+                                                    variant="generate"
+                                                    style={{width: showInput ? '40px' : 'auto'}}
+                                                >
+                                                    <FontAwesomeIcon className="text-white" icon={faWandMagicSparkles}/>
+                                                    <span
+                                                        className={`text-white overflow-hidden transition-all duration-300 ease-in-out ${showInput ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
+                                                          Generate
+                                                    </span>
+                                                </Button>
+                                            </div>
+                                            <div
+                                                className={`absolute left-0 flex items-center transition-all duration-300 ease-in-out ${
+                                                    showInput ? 'translate-x-[44px] opacity-100' : 'translate-x-0 opacity-0 pointer-events-none'
+                                                }`}
+                                            >
+                                                <Input
+                                                    type="text"
+                                                    name="askAPI"
+                                                    id="askAPI"
+                                                    value={askAPI}
+                                                    placeholder="Enter a description of the question you need, and our AI will help you!"
+                                                    onChange={(e) => setAskAPI(e.target.value)}
+                                                    className="w-full mr-2"
                                                 />
-                                            )}
-                                            {currentItem.type === 'checkbox' && (
-                                                <AddCheckboxForm isModalOpen={isModalOpen}
-                                                                 setIsModalOpen={setIsModalOpen}
-                                                                 currentItem={currentItem}
-                                                                 setCurrentItem={setCurrentItem}
-                                                                 handleUpdateItem={handleUpdateItem} items={items}
-                                                                 setItems={setItems}
-                                                                 handleDeleteItem={handleDeleteItem}
-                                                                 handleInputChange={handleInputChange}
-                                                                 showButtons={false}
-                                                />
-                                            )}
-                                            {currentItem.type === 'radio' && (
-                                                <AddRadioForm isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-                                                              currentItem={currentItem} setCurrentItem={setCurrentItem}
-                                                              handleUpdateItem={handleUpdateItem} items={items}
-                                                              setItems={setItems}
-                                                              handleDeleteItem={handleDeleteItem} showButtons={false}
-                                                />
-                                            )}
+                                                <Button variant="outline" onClick={() => handleSubmitAPI(currentItem)}>
+                                                    Ask
+                                                </Button>
+                                            </div>
                                         </div>
-                                    )}
-                                    <p>fim item</p>
 
-{/*{items && (
-<>
-{currentItem && currentItem.type === 'text' && (
-<AddTextForm isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-currentItem={currentItem} setCurrentItem={setCurrentItem}
-handleUpdateItem={handleUpdateItem} items={items}
-setItems={setItems}
-handleDeleteItem={handleDeleteItem} showButtons={false}
-/>
-)}
-{currentItem && currentItem.type === 'checkbox' && (
-<AddCheckboxForm isModalOpen={isModalOpen}
-setIsModalOpen={setIsModalOpen}
-currentItem={currentItem}
-setCurrentItem={setCurrentItem}
-handleUpdateItem={handleUpdateItem} items={items}
-setItems={setItems}
-handleDeleteItem={handleDeleteItem}
-handleInputChange={handleInputChange}
-showButtons={false}
-/>
-)}
-{currentItem && currentItem.type === 'radio' && (
-<AddRadioForm isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-currentItem={currentItem} setCurrentItem={setCurrentItem}
-handleUpdateItem={handleUpdateItem} items={items}
-setItems={setItems}
-handleDeleteItem={handleDeleteItem} showButtons={false}
-/>
-)}
-{currentItem && (
-<div> { currentItem.type }</div>
-)}
+                                        <Separator className={"my-8"}/>
 
-</>
-)}*/}
+
+                                        {currentItem &&
+                                            <>
+                                                {currentItem.type === "text" &&
+                                                    <TextForm item={currentItem} onSubmit={handleModalSubmit}/>}
+                                                {currentItem.type === "checkbox" &&
+                                                    <CheckboxForm item={currentItem} onSubmit={handleModalSubmit}/>}
+                                                {currentItem.type === "radio" &&
+                                                    <RadioForm item={currentItem} onSubmit={handleModalSubmit}/>}
+                                            </>
+                                        }
+                                    </Modal>
+
                                 </form>
                             </div>
-
-                            <Modal show={isWatchFormModalOpen} onClose={() => setIsWatchFormModalOpen(false)}
-                                   closeable={false}>
-                                <div className="p-4 min-h-full bg-[#F8F7FC]">
-                                    <h2 className={"text-2xl font-bold mb-4"}>
-                                        Pré-Visualização do Formulário
-                                    </h2>
-                                    {question && question.map((question, index) => (
-                                        <div key={index}
-                                             className={"my-4 bg-white p-4 min-h-fit rounded-xl gap-4 flex flex-col shadow-lg"}>
-                                            {question.type === 'text' && <Text_CP
-                                                id={question.id}
-                                                item={question}
-                                                options={question.options}
-                                                showButtons={false}
-                                                onInputChange={(e) => handleInputChange(question.id, e.target.value)}
-                                            />}
-                                            {question.type === 'checkbox' && <Checkbox_CP
-                                                id={question.id}
-                                                item={question}
-                                                options={question.options}
-                                                showButtons={false}
-                                                handleUpdateItem={handleUpdateItem}
-                                                onInputChange={(isChecked) => handleInputChange(question.id, isChecked ? "1" : "0")}
-                                            />}
-                                            {question.type === 'radio' && <Radio_CP
-                                                id={question.id}
-                                                item={question}
-                                                options={Array.isArray(question.options) ? question.options : [question.options]}
-                                                showButtons={false}
-                                                onInputChange={(itemOption) => {
-                                                    const itemsArray = Array.isArray(JSON.parse(question.options)) ? JSON.parse(question.options) : [JSON.parse(question.options)];
-                                                    const selectedItemObject = itemsArray.find(opt => opt.id === itemOption);
-                                                    handleInputChange(question.id, {
-                                                        id: selectedItemObject.id,
-                                                        label: selectedItemObject.label
-                                                    });
-                                                }}
-                                            />}
-                                        </div>
-                                    ))}
-
-                                    <div className="flex justify-end">
-                                        <Button variant={"destructive"}
-                                                onClick={() => setIsWatchFormModalOpen(false)}>Fechar</Button>
-                                    </div>
-                                </div>
-                            </Modal>
 
                             {((items && items.length > 0) || (question && question.length > 0)) && (
                                 <div className="mt-6 flex justify-end gap-2">
@@ -335,8 +401,9 @@ handleDeleteItem={handleDeleteItem} showButtons={false}
                                         goBack();
                                         console.log("Button clicked")
                                     }}>Voltar</Button>
-                                    <Button variant={"outline"} onClick={handleWatchForm}>Pré-Visualizar</Button>
-                                    <Button onClick={handleSubmitFormToDB}>Prosseguir</Button>
+                                    <Button type="button" variant={"outline"}
+                                            onClick={handleWatchForm}>Pré-Visualizar</Button>
+                                    <Button type="button" onClick={handleSubmitFormToDB}>Guardar</Button>
                                 </div>
                             )}
 

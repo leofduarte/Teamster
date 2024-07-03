@@ -30,7 +30,7 @@ function Text_CP({
                     <div className="flex-grow">
                         <div className="flex">
                             {showGrab && (
-                                <button className="mr-6 cursor-grab">
+                                <button type="button" className="mr-6 cursor-grab">
                                     <FontAwesomeIcon
                                         ref={setNodeRef}
                                         {...attributes}

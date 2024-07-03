@@ -2,7 +2,6 @@ import {Button} from "@/Components/ui/button.jsx";
 import {Input} from "@/Components/ui/input.jsx";
 import {Label} from "@/Components/ui/label.jsx";
 import {toast} from "@/Components/ui/use-toast.js";
-import {Inertia} from "@inertiajs/inertia";
 import {useState} from "react";
 import {router} from "@inertiajs/react";
 
@@ -27,7 +26,7 @@ const AddParticipantToTeam = ({auth}) => {
                     description: "Questionnaire added successfully!",
                 });
                 const questionnaire_id = response.data.questionnaire_id;
-                router.post('/newfeedback', { 'questionnaire_id': questionnaire_id });
+                router.get('/questionnaires/'+questionnaire_id+'/edit');
             })
             .catch(error => {
                 console.error(error);

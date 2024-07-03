@@ -11,5 +11,14 @@ class PlanActivity extends Model
     protected $table = 'plan_activities';
     protected $fillable = ['name', 'duration', 'date', 'location', 'team_id', 'price', 'objectives', 'observations'];
 
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
 }
 

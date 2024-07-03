@@ -49,7 +49,7 @@ useEffect(() => {
     <div className="flex items-center justify-between">
         <div className="flex w-full items-center justify-between">
             {showGrab && (
-                <button className="mr-6 cursor-grab">
+                <button type="button" className="mr-6 cursor-grab">
                     <FontAwesomeIcon
                         ref={setNodeRef}
                         {...attributes}

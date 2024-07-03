@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faWandMagicSparkles,
     faCalendar,
     faAngleRight,
 } from "@fortawesome/free-solid-svg-icons";
-import { format, set } from "date-fns";
-import { cn } from "@/lib/utils";
-import { Layout } from "./Layout";
+import {format, set} from "date-fns";
+import {cn} from "@/lib/utils";
+import {Layout} from "./Layout";
 import Output from "./Output";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/Components/ui/popover";
-import { Calendar } from "@/Components/ui/calendar";
-import { Input } from "@/Components/ui/input";
-import { Slider } from "@/Components/ui/slider";
-import { Textarea } from "@/Components/ui/textarea";
-import { Inertia } from "@inertiajs/inertia";
+import {Calendar} from "@/Components/ui/calendar";
+import {Input} from "@/Components/ui/input";
+import {Slider} from "@/Components/ui/slider";
+import {Textarea} from "@/Components/ui/textarea";
+import {Inertia} from "@inertiajs/inertia";
 import {
     Select,
     SelectContent,
@@ -27,16 +27,18 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import { Button } from "@/Components/ui/button";
+import {Button} from "@/Components/ui/button";
+import Profile from "@/components_ines/Profile.jsx";
 
-function PlanActivity(activityId) {
+function PlanActivity(props) {
     const [activities, setActivities] = useState([]);
+    const [selectedActivity, setSelectedActivity] = useState(null);
 
-    //? Lógica para mdndar dados para a right bar do Layout
+    console.log("Props:", props);
+    console.log(props.planActivity);
+
+    //? Lógica para mandar dados para a rightBar do Layout
     useEffect(() => {
-        fetchActivities();
-    }, []);
-
     const fetchActivities = async () => {
         try {
             const response = await axios.get("/api/v1/activities");
@@ -46,10 +48,20 @@ function PlanActivity(activityId) {
             console.error("Error fetching activities:", error);
         }
     };
+    fetchActivities();
+}, []);
 
-    const handleNavigate = (atividade) => {
-        const queryString = new URLSearchParams(atividade).toString();
-        Inertia.visit(`/activity?${queryString}`);
+
+    const handleNavigate = async (atividade) => {
+        try {
+            const response = await axios.post(`/api/v1/atividade/detalhes/${atividade.id}`);
+            setSelectedActivity(response.data);
+            console.log("Selected activity:", response.data);
+
+            Inertia.visit(`/atividade/detalhes/${atividade.id}`);
+        } catch (error) {
+            console.error("Error fetching selected activity:", error);
+        }
     };
 
     const sidebar = (
@@ -85,46 +97,39 @@ function PlanActivity(activityId) {
         </div>
     );
 
-    //? Lógica para quando uma atividade é selecionada posteriormente os valores estarem preenchidos
-    const [planActivities, setPlanActivities] = useState([]);
+    const profileContent = (
+        <div className="joyride-profile">
+            <Profile/>
+        </div>
+    );
+
+    //? Lógica para quando uma atividade é selecionada posteriormente e os preencher os valores
+    const [selectedPlanActivity, setSelectedPlanActivity] = useState(props.planActivity);
+
 
     useEffect(() => {
-        const fetchPlanActivities = async () => {
-            try {
-                const response = await axios.get("/api/v1/getPlanActivities");
-                setPlanActivities(response.data);
+        if (props.planActivity) {
+            console.log("data",props)
 
-                const activity = response.data.find(
-                    (activity) =>
-                        activity.id === parseInt(activityId.activityId)
-                );
-                if (activity) {
-                    console.log("Activity found:", activity);
-                    setForm((prevForm) => ({
-                        ...prevForm,
-                        nome: activity.name || "",
-                        objetivo: activity.objective || "",
-                        objetivos: [activity.objectives] || [],
-                        localizacao: activity.location || "",
-                        numParticipantes: activity.participants || "",
-                        orcamento: activity.price || "",
-                        observacoes: activity.observations || "",
-                        duracao: activity.duration || "",
-                    }));
-                } else {
-                    console.log(
-                        "No activity found with id:",
-                        activityId.activityId
-                    );
-                }
-            } catch (error) {
-                console.error("Error fetching activities:", error);
-            }
-        };
+            setForm({
+                nome: props.planActivity.name || "",
+                objetivos:  JSON.parse(props.planActivity.objectives) || [],
+                objetivo: "" || [],
+                localizacao: props.planActivity.location || "",
+                dia: props.planActivity.date || "",
+                numParticipantes: props.planActivity.participants || "",
+                orcamento: props.planActivity.price || "",
+                observacoes: props.planActivity.observations || "",
+                duracao: props.planActivity.duration || "",
+            });
+        }
 
-        fetchPlanActivities();
-    }, [activityId.activityId]);
+    }, [props.planActivity]);
+    console.log("Selected Plan Activity:", selectedPlanActivity);
 
+
+
+    //? Lógica para o formulário q vai ser enviado
     const [form, setForm] = useState({
         nome: "",
         objetivo: "",
@@ -159,7 +164,7 @@ function PlanActivity(activityId) {
 
     //? Função para lidar com os inputs
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setForm((prevForm) => ({
             ...prevForm,
             [name]: value,
@@ -314,6 +319,7 @@ function PlanActivity(activityId) {
                     participants: team.participants,
                 }))
             );
+            console.log("Equipas", equipas);
         });
     }, []);
 
@@ -426,7 +432,7 @@ function PlanActivity(activityId) {
                 nome,
                 descricao,
                 atividades,
-                horario,
+                JSON.stringify(horario),
                 tarefas_planeamento,
                 tarefas_participante,
             ]);
@@ -441,6 +447,16 @@ function PlanActivity(activityId) {
         } catch (error) {
             console.error("Erro ao enviar formulário:", error);
         }
+    };
+
+    const handleAddParticipants = () => {
+        const newTeam = {
+            id: null,
+            name: `${numParticipantes} participants`,
+            participantsLength: Number(numParticipantes),
+        };
+
+        setEquipas(prevEquipas => [...prevEquipas, newTeam]);
     };
 
     //? Função para verificar se o modal está aberto
@@ -461,244 +477,275 @@ function PlanActivity(activityId) {
     //? Finalmente, o return
     return (
         <>
-            <Layout sidebar={sidebar}>
-                <div>
-                    <div className="flex h-[10%] mb-5">
-                        <h1 className="font-bold text-3xl">
-                            Planear Atividade
-                        </h1>
-                    </div>
+            <Layout sidebar={sidebar} profile={profileContent}>
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 pt-12">
+                    <div className="overflow-hidden">
+                        <div className="p-6 text-gray-900">
+                            <h1 className={"text-3xl font-bold text-black"}>
+                                Planear Atividade
+                            </h1>
 
-                    <div className="h-[30%] flex flex-col w-full">
-                        <h2 className="font-serif uppercase text-2xl h-[23%] mb-3">
-                            Nova atividade
-                        </h2>
+                            <div className={"my-6 flex flex-col gap-4"}>
+                                <h2 className="font-serif uppercase text-2xl mb-3">
+                                    Nova atividade
+                                </h2>
 
-                        <div className="flex flex-wrap justify-start mb-3">
-                            <div className="w-[40%] mr-4">
-                                <p className="text-left text-xs mb-2">
-                                    Nome da Atividade
-                                </p>
-                                <Input
-                                    placeholder="Ex. Atividade 27/08"
-                                    variant={"activity"}
-                                    name="nome"
-                                    value={nome}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-
-                            <div className="w-[40%] mr-4">
-                                <p className="text-left text-xs mb-2">
-                                    Duração da atividade
-                                </p>
-                                <Input
-                                    placeholder="Ex. 8 horas"
-                                    variant={"activity"}
-                                    name="duracao"
-                                    value={duracao}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-
-                            <div className="w-[25%] mr-4">
-                                <p className="text-left text-xs mb-2">Data</p>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant={"activity"}
-                                            className={cn(
-                                                "mb-2 py-2 px-1 border rounded border-gray-400 text-large shadow w-full h-10",
-                                                !dia && "text-muted-foreground"
-                                            )}
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faCalendar}
-                                                className="mr-2 h-4 w-4"
+                                <div className={"flex flex-col gap-4"}>
+                                    <div className="flex mb-3 gap-4">
+                                        <div className="w-full">
+                                            <p className="text-left text-xs mb-2">
+                                                Nome da Atividade
+                                            </p>
+                                            <Input
+                                                placeholder="Ex. Atividade 27/08"
+                                                variant={"activity"}
+                                                name="nome"
+                                                value={nome}
+                                                onChange={handleInputChange}
                                             />
-                                            {dia ? (
-                                                format(new Date(dia), "PPP")
-                                            ) : (
-                                                <span>Escolhe uma data</span>
-                                            )}
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent
-                                        className="w-auto p-0"
-                                        align="start"
-                                    >
-                                        <Calendar
-                                            mode="single"
-                                            selected={
-                                                dia ? new Date(dia) : undefined
-                                            }
-                                            onSelect={(date) =>
-                                                setForm((prevForm) => ({
-                                                    ...prevForm,
-                                                    dia: date.toISOString(),
-                                                }))
-                                            }
-                                            initialFocus
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                            </div>
+                                        </div>
 
-                            <div className="w-[25%]">
-                                <p className="text-left text-xs mb-2">
-                                    Localização
-                                </p>
-                                <Input
-                                    placeholder="Ex. Aveiro"
-                                    name="localizacao"
-                                    value={localizacao}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        </div>
+                                        <div className="w-full">
+                                            <p className="text-left text-xs mb-2">
+                                                Duração da atividade
+                                            </p>
+                                            <Input
+                                                variant={"activity"}
+                                                placeholder="Ex. 6 horas"
+                                                name="duracao"
+                                                value={duracao}
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
+                                    </div>
 
-                        <div className="flex flex-wrap justify-start">
-                            <div className="w-[40%] mr-4">
-                                <p className="text-left text-xs mb-2">Equipa</p>
-                                <Select
-                                    onValueChange={(value) =>
-                                        handleEquipaChange(JSON.parse(value))
-                                    }
-                                    onChange={(value) =>
-                                        handleEquipaChange(JSON.parse(value))
-                                    }
-                                >
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder="Selecionar Equipa" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {equipas.map((equipa) => (
-                                            <SelectItem
-                                                key={equipa.id}
-                                                value={JSON.stringify({
-                                                    id: equipa.id,
-                                                    participantsLength:
-                                                    equipa.participants
-                                                        .length,
-                                                })}
+
+                                    <div className={"flex mb-3 gap-4"}>
+                                        <div className="w-full">
+                                            <p className="text-left text-xs mb-2">Data</p>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <Button
+                                                        variant={"activity"}
+                                                        className={cn(
+                                                            "mb-2 py-2 px-1 border rounded text-large w-full h-10",
+                                                            !dia && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={faCalendar}
+                                                            className="mr-2 h-4 w-4"
+                                                        />
+                                                        {dia ? (
+                                                            format(new Date(dia), "PPP")
+                                                        ) : (
+                                                            <span>Escolhe uma data</span>
+                                                        )}
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent
+                                                    className="w-auto p-0"
+                                                    align="start"
+                                                >
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={
+                                                            dia ? new Date(dia) : undefined
+                                                        }
+                                                        onSelect={(date) =>
+                                                            setForm((prevForm) => ({
+                                                                ...prevForm,
+                                                                dia: date.toISOString(),
+                                                            }))
+                                                        }
+                                                        initialFocus
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                        </div>
+
+                                        <div className="w-full">
+                                            <p className="text-left text-xs mb-2">
+                                                Localização
+                                            </p>
+                                            <Input
+                                                placeholder="Ex. Aveiro"
+                                                variant={"activity"}
+                                                name="localizacao"
+                                                value={localizacao}
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex mb-3 gap-4">
+                                        <div className="w-full">
+                                            <p className="text-left text-xs mb-2">Equipa</p>
+                                            <Select className="w-2/5"
+                                                    onValueChange={(value) =>
+                                                        handleEquipaChange(JSON.parse(value))
+                                                    }
+                                                    onChange={(value) =>
+                                                        handleEquipaChange(JSON.parse(value))
+                                                    }
                                             >
-                                                {equipa.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={"Seleciona uma equipa"}/>
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {equipas.map((equipa) => (
+                                                        <SelectItem
+                                                            key={equipa.id}
+                                                            value={JSON.stringify({
+                                                                id: equipa.id,
+                                                                participantsLength: equipa.participants ? equipa.participants.length : 0
+                                                            })}
+                                                        >
+                                                            {equipa.name}
+                                                        </SelectItem>
+                                                    ))}
 
-                            <div className="relative">
-                                <p className="font-medium text-sm text-slate-700 dark:text-slate-400 mb-3">
-                                    Orçamento
-                                </p>
-                                <Slider
-                                    value={[orcamento]} // Pass orcamento as an array
-                                    onValueChange={handleOrcamentoChange}
-                                    max={1000}
-                                    step={10}
-                                />
-                                <p className="text-center mt-2">
-                                    {orcamento.toLocaleString("pt-PT", {
-                                        style: "currency",
-                                        currency: "EUR",
-                                    })}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                                                    <div className="flex flex-row">
+                                                        <Input
+                                                            type="number"
+                                                            placeholder="Indica o número de participantes"
+                                                            variant={"activity"}
+                                                            name="numParticipantes"
+                                                            value={numParticipantes}
+                                                            onChange={(e) => setForm({
+                                                                ...form,
+                                                                numParticipantes: e.target.value
+                                                            })}
+                                                        />
+                                                        <Button variant={"activity"} onClick={handleAddParticipants}>
+                                                            Add
+                                                        </Button>
+                                                    </div>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="w-full flex flex-col">
+                                            <p className="text-left text-xs mb-2">
+                                                Orçamento:
+                                                <span className="font-bold text-sm text-center mt-1 ml-2">
+                                                {orcamento.toLocaleString("pt-PT", {
+                                                    style: "currency",
+                                                    currency: "EUR",
+                                                })}
+                                            </span>
+                                            </p>
+                                            <div className={"flex items-center align-middle"}>
+                                                <Slider
+                                                    value={[orcamento]}
+                                                    onValueChange={handleOrcamentoChange}
+                                                    max={5000}
+                                                    step={10}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col mb-3">
+                                        <h2 className="font-serif text-2xl pb-2">
+                                            Objetivos
+                                        </h2>
+                                        <p className="text-left text-xs mb-2">
+                                            Adicione os objetivos
+                                        </p>
+                                        <div className="flex gap-4">
+                                            <Input
+                                                variant={"activity"}
+                                                className="w-full"
+                                                placeholder="Ex. Melhorar a comunicação"
+                                                value={objetivo}
+                                                onChange={handleInputChange}
+                                                name="objetivo"
+                                                onKeyPress={handleObjetivosKeyPress}
+                                            />
+                                            <Button
+                                                className={`h-10 ${isEmpty(objetivo) ? 'cursor-not-allowed' : ''}`}
+                                                variant="activity"
+                                                onClick={handleObjetivosAdd}
+                                                disabled={isEmpty(objetivo)}
+                                            >
+                                                Adicionar
+                                            </Button>
+                                        </div>
+                                        {objetivos.length > 0 && (
+                                            <div className="flex flex-col pt-2 justify-start">
+                                                <div className="flex">
+                                                    {objetivos.map((obj, index) => (
+                                                        <Button
+                                                            key={index}
+                                                            className="min-w-28"
+                                                            variant={"activity"}
+                                                            value={obj}
+                                                            onMouseEnter={(e) =>
+                                                                (e.currentTarget.textContent =
+                                                                    "Remover")
+                                                            }
+                                                            onMouseLeave={(e) =>
+                                                                (e.currentTarget.textContent =
+                                                                    obj)
+                                                            }
+                                                            onClick={handleObjetivosRemove}
+                                                        >
+                                                            {obj}
+                                                        </Button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
 
-                    <div className="flex flex-col mb-5">
-                        <div className="h-1/2">
-                            <h2 className="font-serif text-2xl pt-10 pb-2">
-                                Objetivos
-                            </h2>
-                        </div>
-                        <div>
-                            <p className="text-left text-xs mb-2">
-                                Adicione os objetivos
-                            </p>
-                            <div className="flex">
-                                <Input
-                                    className="w-[40%] me-5"
-                                    placeholder="Ex. Melhorar a comunicação"
-                                    value={objetivo}
-                                    onChange={handleInputChange}
-                                    name="objetivo"
-                                    onKeyPress={handleObjetivosKeyPress}
-                                />
-                                <Button
-                                    className="h-10"
-                                    variant="activity"
-                                    onClick={handleObjetivosAdd}
-                                    disabled={isEmpty(objetivo)}
-                                >
-                                    Adicionar
-                                </Button>
-                            </div>
-                            <div className="flex flex-col pt-2 justify-start">
-                                <div className="flex">
-                                    {objetivos.map((obj, index) => (
-                                        <Button
-                                            key={index}
-                                            className="min-w-28"
-                                            variant={"activity"}
-                                            value={obj}
-                                            onMouseEnter={(e) =>
-                                                (e.currentTarget.textContent =
-                                                    "Remover")
-                                            }
-                                            onMouseLeave={(e) =>
-                                                (e.currentTarget.textContent =
-                                                    obj)
-                                            }
-                                            onClick={handleObjetivosRemove}
-                                        >
-                                            {obj}
+                                    <div className={"flex flex-col mb-3"}>
+                                        <h2 className="font-serif text-2xl pb-2">
+                                            Observações
+                                        </h2>
+                                        <div>
+                                            <p className="text-left text-xs mb-2">
+                                                Escreva aqui as observações que acha importantes
+                                            </p>
+                                            <Textarea
+                                                className={"bg-white border-none border rounded border-gray-400 text-large shadow-md ring-1 ring-gray-200 focus-visible:border-0 h-10 px-4 py-2"}
+                                                placeholder="Ex. Deslocação não incluída"
+                                                variant={"activity"}
+                                                value={observacoes}
+                                                onChange={handleInputChange}
+                                                name="observacoes"
+                                            />
+
+                                        </div>
+                                    </div>
+                                    <div className={"flex place-content-end justify-end"}>
+                                        <Button type="button" onClick={sendForm}>
+                                            <FontAwesomeIcon
+                                                className="mr-2"
+                                                icon={faWandMagicSparkles}
+                                            />
+                                            Gerar atividade
                                         </Button>
-                                    ))}
+                                    </div>
+
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
-
-                    <div>
-                        <h2 className="font-serif text-2xl pb-2">
-                            Observações
-                        </h2>
-                        <div>
-                            <p className="text-left text-xs mb-2">
-                                Escreva aqui as observações que acha importantes
-                            </p>
-                            <Textarea
-                                placeholder="Ex. Deslocação não incluída"
-                                value={observacoes}
-                                onChange={handleInputChange}
-                                name="observacoes"
-                            />
-                        </div>
-                    </div>
-
-                    <Button onClick={sendForm}>
-                        Gerar atividade{" "}
-                        <FontAwesomeIcon
-                            className="ms-2"
-                            icon={faWandMagicSparkles}
-                        />{" "}
-                    </Button>
                 </div>
             </Layout>
 
-            {modalIsOpen && (
-                <Output
-                    resultadoResposta={resultadoResposta}
-                    onCloseModal={() => setModalIsOpen(false)}
-                    planActivityId={planActivityId}
-                />
-            )}
+            {
+                modalIsOpen && (
+                    <Output
+                        resultadoResposta={resultadoResposta}
+                        onCloseModal={() => setModalIsOpen(false)}
+                        planActivityId={planActivityId}
+                    />
+                )
+            }
         </>
-    );
+    )
+        ;
 }
 
 export default PlanActivity;

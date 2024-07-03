@@ -48,7 +48,7 @@ function Medals() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 joyride-medals">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 joyride-medals">
       {/* Renderiza as medalhas recebidas */}
       {renderMedals()}
 

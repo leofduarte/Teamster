@@ -28,4 +28,9 @@ class Participant extends Authenticable
     {
         return $this->belongsToMany(Item::class)->withPivot('response');
     }
+
+    public function participants()
+    {
+        return $this->hasMany(Participant::class);
+    }
 }

@@ -4,6 +4,8 @@ import {InertiaLink} from "@inertiajs/inertia-react";
 import {HoverCard, HoverCardContent, HoverCardTrigger} from "@/Components/ui/hover-card.jsx";
 import {Avatar, AvatarFallback, AvatarImage} from "@/Components/ui/avatar.jsx";
 import {Inertia} from "@inertiajs/inertia";
+import { Link } from '@inertiajs/react'
+
 import {Checkbox} from "@/Components/ui/checkbox.jsx";
 import {
     Pagination,
@@ -11,8 +13,6 @@ import {
     PaginationEllipsis,
     PaginationItem,
     PaginationLink,
-    PaginationNext,
-    PaginationPrevious
 } from "@/Components/ui/pagination.jsx";
 import {
     Tooltip,
@@ -24,12 +24,10 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEllipsisVertical} from "@fortawesome/free-solid-svg-icons";
+import {faEllipsisVertical, faFilePdf} from "@fortawesome/free-solid-svg-icons";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -41,12 +39,14 @@ import Modal from "@/Components/Modal.jsx";
 import AddParticipantToTeam from "@/Pages/AddParticipantToTeam.jsx";
 import {Button} from "@/Components/ui/button.jsx";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import {Separator} from "@/Components/ui/separator.jsx";
 
-const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestionnaires}) => {
+const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestionnaires, activities}) => {
     const [participantToRemove, setParticipantToRemove] = useState(null);
     const [showAddParticipant, setShowAddParticipant] = useState(false);
     const [selectedParticipants, setSelectedParticipants] = useState([]);
     const [checkboxActive, setCheckboxActive] = useState(false);
+    const [activitiesList, setActivitiesList] = useState(activities.map(item => item.activities));
 
     function toggleParticipantSelection(participantId) {
         if (selectedParticipants.includes(participantId)) {
@@ -63,15 +63,16 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
         setSelectedParticipants([]);
     }
 
-
     console.log('team', team);
     console.log('participants:', participants);
     console.log('questionnaires:', questionnaires);
     console.log('userQuestionnaires:', userQuestionnaires);
-
+    console.log(activitiesList);
+    activitiesList.forEach(activity => {
+        console.log(activity.activities);
+    });
     const participantsArray = participants.data ? Object.values(participants.data) : participants;
     console.log(participantsArray);
-
 
     function removeParticipant(teamId, participantId) {
         axios.delete(`/api/v1/team/${teamId}/participant/${participantId}`)
@@ -94,55 +95,71 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
 
                         <div className={"my-6 flex flex-col justify-between"}>
                             <div className={"flex justify-between"}>
-                                <h2 className={"text-2xl font-serif uppercase"}>Gerir Equipa</h2>
+                                <h2 className={"text-2xl font-serif uppercase items-end flex"}>Gerir Equipa</h2>
                                 <Button
                                     onClick={() => setShowAddParticipant(true)}>
                                     Adicionar Membros
                                 </Button>
                             </div>
                             <div className={"my-4 bg-white p-4 min-h-fit rounded-md gap-4 flex flex-col"}>
-                                <div className={"flex gap-2"}>
-                                    <h3 className={"text-2xl font-bold"}>
-                                        Membros
-                                    </h3>
+                                <div className={"flex justify-between"}>
+                                    <div className={"flex gap-2 items-center"}>
+                                        <h3 className={"text-2xl font-bold"}>
+                                            Membros
+                                        </h3>
 
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger>
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger>
                                                 <span
                                                     className={"text-md font-bold text-emerald-500"}> ({participants.total})</span>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Total de membros</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Total de membros</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger>
                                                  <span className={"text-md font-bold text-yellow-500"}>
                                         ({countStatus3})
                                     </span>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Convites pendentes</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                    <div className={"flex justify-between space-x-4"}>
-                                        <button onClick={() => setCheckboxActive(!checkboxActive)}>
-                                            {checkboxActive ? "Cancelar" : "Selecionar"}
-                                        </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Convites pendentes</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </div>
+                                    <div className={"flex items-center gap-4"}>
+
+                                        {/*icon eliminar participant*/}
                                         {checkboxActive && (
-                                            <button onClick={removeSelectedParticipants}>
+                                            <button className={"flex align-middle"}
+                                                    onClick={removeSelectedParticipants}>
                                                 <FontAwesomeIcon icon={faTrash} className={"text-red-500"}/>
                                             </button>
                                         )}
+                                        <button onClick={() => {
+                                            if (checkboxActive && selectedParticipants.length > 0) {
+                                                setSelectedParticipants([]);
+                                            }
+                                            setCheckboxActive(!checkboxActive);
+                                        }}>
+                                            {checkboxActive ? "Cancelar" : "Selecionar"}
+                                        </button>
                                     </div>
                                 </div>
 
+                                <Separator orientation={"horizontal"}/>
+
                                 <div className={"gap-2"}>
+                                    {selectedParticipants.length !== 0 && checkboxActive && (
+                                        <div className="flex gap-4 items-center">
+                                            <p>{selectedParticipants.length} Selected</p>
+                                        </div>
+                                    )}
                                     {participantsArray.map((participant, index) => (
                                         <div key={index} className={"flex flex-row justify-between"}>
                                             <div className={"flex items-center gap-2 align-middle"}>
@@ -156,7 +173,7 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
                                                         }}
                                                     />
                                                 )}
-                                                <div className={"flex "}>
+                                                <div className={"flex gap-2"}>
                                                     {participant.pivot.status_id === 3 ? (
                                                         <HoverCard>
                                                             <HoverCardTrigger>
@@ -188,13 +205,22 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
                                                             <AvatarFallback>CN</AvatarFallback>
                                                         </Avatar>
                                                     )}
-                                                    <p className={"flex items-center font-semibold"}>
-                                                        {participant.name ? (
-                                                            participant.name
-                                                        ) : (
-                                                            participant.email
-                                                        )}
-                                                    </p>
+                                                    {participant.name ? (
+                                                        <div
+                                                            className={"flex align-middle flex-col leading-tight place-content-center"}>
+                                                            <p className={"font-semibold"}>
+                                                                {participant.name}
+                                                            </p>
+                                                            <p className={"text-xs text-gray-500"}>
+                                                                {participant.email}
+                                                            </p>
+                                                        </div>
+                                                    ) : (
+                                                        <p className={"flex items-center font-semibold place-content-center"}>
+                                                            {participant.email}
+                                                        </p>
+                                                    )}
+
                                                 </div>
                                             </div>
                                             <DropdownMenu>
@@ -203,11 +229,7 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
                                                                      className={"px-2 focus-visible:ring-0"}/>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()}>
-                                                    <DropdownMenuLabel>Options</DropdownMenuLabel>
-                                                    <DropdownMenuSeparator/>
-                                                    <DropdownMenuItem>Edit</DropdownMenuItem>
                                                     <DropdownMenuItem>Resend Invite</DropdownMenuItem>
-
                                                     <AlertDialog>
                                                         <AlertDialogTrigger asChild
                                                                             className={"hover:text-red-100"}>
@@ -287,18 +309,74 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
                             </div>
 
                             <div className={"my-4 bg-white p-4 min-h-fit rounded-md gap-4 flex flex-col"}>
-                                <div className={"flex flex-col gap-2"}>
+                                <div className={"flex flex-col gap-4"}>
+                                    <h3 className={"text-2xl font-bold"}>
+                                        Atividades
+                                    </h3>
+
+                                    <Separator orientation={"horizontal"}/>
+
+                                    {/* ATIVIDADES */}
+                                    {activitiesList.length === null ? (
+                                        <div className={"flex flex-col gap-2"}>
+                                            {activitiesList.map((activity, index) => (
+                                                <div key={index} className={"flex flex-col"}>
+                                                    <div className={"flex justify-between"}>
+                                                        <div className={"leading-tight"}>
+                                                            <h3 className={"font-bold"}>{activity.name}</h3>
+                                                            <p className={"text-xs"}>{activity.date}</p>
+                                                        </div>
+
+                                                        {activity.activities.map((innerActivity, innerIndex) => (
+                                                            <div key={innerIndex} className={"flex"}>
+                                                                <p className={"text-red-500"}>{innerActivity.id}</p>
+                                                                <InertiaLink
+                                                                    href={`/atividade/detalhes/${innerActivity.id}`}
+                                                                    className="text-blue-600 hover:text-blue-800 mr-2">
+                                                                    See
+                                                                </InertiaLink>
+                                                                <InertiaLink href={`/atividade/${innerActivity.id}/pdf`}
+                                                                             method={"get"} as={"button"}>
+                                                                    <FontAwesomeIcon icon={faFilePdf}
+                                                                                     className={"text-2xl"}/>
+                                                                </InertiaLink>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <p>Não tem atividades relacionadas com esta equipa.</p>
+                                                <Link
+                                                    href={"/atividade"} className={"text-blue-500 hover:underline"}>
+                                                    Crie aqui uma atividade.
+                                                </Link>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* QUESTIONARIOS */}
+                            <div className={"my-4 bg-white p-4 min-h-fit rounded-md gap-4 flex flex-col"}>
+                                <div className={"flex flex-col gap-4"}>
                                     <h3 className={"text-2xl font-bold"}>
                                         Questionários
                                     </h3>
+                                    <Separator orientation={"horizontal"}/>
+
+
+                                    {questionnaires.length === 0 ? (
                                     <div className={"flex flex-col gap-2"}>
                                         {questionnaires.map((questionnaire, index) => (
                                             <div key={index} className={"flex flex-col"}>
                                                 <div className={"flex justify-between"}>
                                                     <h3 className={"font-bold"}>{questionnaire.title}</h3>
                                                     <div>
-                                                        <InertiaLink href={`/questionnaires/${questionnaire.id}/edit`}
-                                                                     className="text-blue-600 hover:text-blue-800 mr-2">
+                                                        <InertiaLink
+                                                            href={`/questionnaires/${questionnaire.id}/edit`}
+                                                            className="text-blue-600 hover:text-blue-800 mr-2">
                                                             Edit
                                                         </InertiaLink>
                                                         <InertiaLink
@@ -320,37 +398,47 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
                                                 !questionnaires.some(questionnaire => questionnaire.id === userQuestionnaire.id)
                                             ).map((questionnaire, index) => (
                                                 <div key={index}
-                                                     className={"bg-gray-200 flex items-center justify-between"}>
+                                                     className={"flex items-center justify-between"}>
                                                     <div>
-                                                        <h4 className={"font-bold"}>{questionnaire.title}</h4>
-                                                        <p>{questionnaire.description}</p>
+                                                        <h3 className={"font-bold"}>{questionnaire.title}</h3>
+                                                        <p className={"text-sm"}>{questionnaire.description}</p>
                                                     </div>
                                                     <InertiaLink
                                                         href={`/teams/${team.id}/questionnaires/${questionnaire.id}`}
                                                         method="post"
                                                         as="button"
-                                                        className="bg-primary text-sm text-white p-2 rounded-md hover:bg-blue-800"
+                                                        className="bg-primary text-primary-foreground hover:bg-primary/90 text-sm text-white p-2 rounded-md"
                                                     >
                                                         Add to team
                                                     </InertiaLink>
                                                 </div>
                                             ))}
-
-                                            <Modal show={showAddParticipant}
-                                                   onClose={() => setShowAddParticipant(false)}>
-                                                <AddParticipantToTeam teamId={team.id}
-                                                                      onClose={() => setShowAddParticipant(false)}/>
-                                            </Modal>
                                         </div>
                                     </div>
+                                    ) : (
+                                        <div>
+                                        <p>Não tem questonários relacionados com esta equipa.</p>
+                                        <Link
+                                        href={"/feedback"} className={"text-blue-500 hover:underline"}>
+                                    Crie aqui um questionário.
+                                </Link>
+                            </div>
+                            )}
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
+                <Modal show={showAddParticipant}
+                       onClose={() => setShowAddParticipant(false)}>
+                    <AddParticipantToTeam teamId={team.id}
+                                          onClose={() => setShowAddParticipant(false)}/>
+                </Modal>
             </div>
         </Layout>
-    );
+    )
+        ;
 }
 
 export default TeamPage;

@@ -103,7 +103,7 @@ const Questionnaire = ({auth}) => {
 
                             <div className={"gap-4 flex flex-col"}>
                                 {questionnaires && questionnaires.map((questionnaire) => (
-                                    <div key={questionnaire.id} className="flex justify-between">
+                                    <div key={questionnaire.id} className="flex justify-between my-4 bg-white p-4 min-h-fit rounded-xl gap-4 shadow-lg">
                                         <div className={"flex items-center"}>
                                             <h2 className={"text-2xl font-serif uppercase"}>{questionnaire.title}</h2>
                                             <span className={"text-gray-500 mx-3"}>-</span>
