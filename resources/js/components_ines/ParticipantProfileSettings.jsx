@@ -51,7 +51,7 @@ function ParticipantProfileSettings({
                                     onClick={() => {
                                         setIsEditingProfile(true);
                                     }}
-                                    className="underline hover:text-slate-600"
+                                    className="underline hover:text-slate-600 cursor-pointer"
                                 >
                                     Editar perfil
                                 </a>

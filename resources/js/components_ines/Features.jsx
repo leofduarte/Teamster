@@ -1,8 +1,9 @@
 import React from 'react';
-import icon1 from '../../../storage/app/public/icons/icon-1.svg';
-import icon2 from '../../../storage/app/public/icons/icon-2.svg';
-import icon3 from '../../../storage/app/public/icons/icon-3.svg';
-import icon4 from '../../../storage/app/public/icons/icon-4.svg';
+import icon1 from "../../../storage/app/public/icons/icon-1.svg";
+import icon2 from "../../../storage/app/public/icons/icon-2.svg";
+import icon3 from "../../../storage/app/public/icons/icon-3.svg";
+import icon4 from "../../../storage/app/public/icons/icon-4.svg";
+
 
 const Features = () => {
   return (

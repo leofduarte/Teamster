@@ -101,6 +101,12 @@ const Questionnaire = ({auth}) => {
                                 </p>
                             </div>
 
+                            {questionnaires.length === 0 ? (
+                                <div className={"mt-16  "}>
+                                <p>Crie um novo formulário para começar a recolher feedback dos seus colaboradores...</p>
+                                </div>
+                            ) : (
+
                             <div className={"gap-4 flex flex-col"}>
                                 {questionnaires && questionnaires.map((questionnaire) => (
                                     <div key={questionnaire.id} className="flex justify-between my-4 bg-white p-4 min-h-fit rounded-xl gap-4 shadow-lg">
@@ -138,6 +144,7 @@ const Questionnaire = ({auth}) => {
                                     </div>
                                 ))}
                             </div>
+                            )}
 
                             {errorMessage && (
                                 <p className="text-red-500 text-xs italic">{errorMessage}</p>

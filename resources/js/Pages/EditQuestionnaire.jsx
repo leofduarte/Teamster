@@ -14,7 +14,7 @@ import {DndContext, PointerSensor, useSensor, useSensors} from "@dnd-kit/core";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
 import {Separator} from "@/Components/ui/separator.jsx";
-import Modal from "../Components/Modal.jsx";
+import Modal from "react-modal";
 import CheckboxForm from "@/Components/EmployeeForm/CheckboxForm.jsx";
 import TextForm from "@/Components/EmployeeForm/TextForm.jsx";
 import RadioForm from "@/Components/EmployeeForm/RadioForm.jsx";
@@ -311,7 +311,6 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
                                         </div>
                                     ))}
 
-                                    <p>aqui vai ser o items</p>
 
                                     {/* NEW */}
                                     {items && items.length ?
@@ -391,7 +390,6 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
                                             </>
                                         }
                                     </Modal>
-
                                 </form>
                             </div>
 
@@ -401,21 +399,17 @@ const EditQuestionnaire = ({questionnaire, questions}) => {
                                         goBack();
                                         console.log("Button clicked")
                                     }}>Voltar</Button>
-                                    <Button type="button" variant={"outline"}
-                                            onClick={handleWatchForm}>Pré-Visualizar</Button>
+                                    {/*<Button type="button" variant={"outline"}*/}
+                                    {/*        onClick={handleWatchForm}>Pré-Visualizar</Button>*/}
                                     <Button type="button" onClick={handleSubmitFormToDB}>Guardar</Button>
                                 </div>
                             )}
 
-                            <Input variant={"outline"} className={" w-1/5"} type={"number"} label={"Questionnaire ID"}
-                                   onChange={(e) => setQuestionnaire_id(e.target.value)} value={questionnaire_id}
-                            />
-                            {errorMessage && (
-                                <p className="text-red-500 text-xs italic">{errorMessage}</p>
-                            )}
                         </div>
                     </div>
                 </div>
+
+
             </Layout>
         </div>
     );

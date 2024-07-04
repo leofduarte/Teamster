@@ -26,6 +26,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger
 } from "@/Components/ui/alert-dialog.jsx";
+import {Inertia} from "@inertiajs/inertia";
 
 const SeeTeams = (props) => {
     const [teams, setTeams] = useState([]);
@@ -119,52 +120,51 @@ console.log("index", index)
                                             <h3 className="text-2xl font-semibold ">{team.name}</h3>
                                     <div className={"items-center flex"}>
                                             <InertiaLink href={`/teams/${team.id}`} className={"text-sm items-center flex"}>
-                                                View more
+                                               Ver mais
                                             </InertiaLink>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger>
-                                                    <FontAwesomeIcon icon={faEllipsisVertical}
-                                                                     className={"px-2 ms-2 focus-visible:ring-0"}/>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()}>
-                                                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                                                    <AlertDialog>
-                                                        <AlertDialogTrigger asChild
-                                                                            className={"hover:text-red-100"}>
-                                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}
-                                                                              onClick={() => setTeamToRemove(team.id)}
-                                                                              className={"text-red-500"}>
-                                                                Eliminate
-                                                            </DropdownMenuItem>
-                                                        </AlertDialogTrigger>
-                                                        <AlertDialogContent>
-                                                            <AlertDialogHeader>
-                                                                <AlertDialogTitle>Please Confirm!</AlertDialogTitle>
-                                                                <AlertDialogDescription>
-                                                                    Are you sure you want to remove this participant
-                                                                    from the team?
-                                                                </AlertDialogDescription>
-                                                            </AlertDialogHeader>
-                                                            <AlertDialogFooter>
-                                                                <AlertDialogCancel
-                                                                    variant={"outline"}
-                                                                    onClick={() => setTeamToRemove(null)}
-                                                                >
-                                                                    Cancel
-                                                                </AlertDialogCancel>
-                                                                <AlertDialogAction
-                                                                    variant={"destructive"}
-                                                                    onClick={() => {
-                                                                        teamToRemove(team.id);
-                                                                    }}
-                                                                >
-                                                                    Continue
-                                                                </AlertDialogAction>
-                                                            </AlertDialogFooter>
-                                                        </AlertDialogContent>
-                                                    </AlertDialog>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                            {/*<DropdownMenu>*/}
+                                            {/*    <DropdownMenuTrigger>*/}
+                                            {/*        <FontAwesomeIcon icon={faEllipsisVertical}*/}
+                                            {/*                         className={"px-2 ms-2 focus-visible:ring-0"}/>*/}
+                                            {/*    </DropdownMenuTrigger>*/}
+                                            {/*    <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()}>*/}
+                                            {/*        <DropdownMenuItem>Editar</DropdownMenuItem>*/}
+                                            {/*        <AlertDialog>*/}
+                                            {/*            <AlertDialogTrigger asChild*/}
+                                            {/*                                className={"hover:text-red-100"}>*/}
+                                            {/*                <DropdownMenuItem onSelect={(e) => e.preventDefault()}*/}
+                                            {/*                                  onClick={() => setTeamToRemove(team.id)}*/}
+                                            {/*                                  className={"text-red-500"}>*/}
+                                            {/*                    Eliminar*/}
+                                            {/*                </DropdownMenuItem>*/}
+                                            {/*            </AlertDialogTrigger>*/}
+                                            {/*            <AlertDialogContent>*/}
+                                            {/*                <AlertDialogHeader>*/}
+                                            {/*                    <AlertDialogTitle>Por favor confirme!</AlertDialogTitle>*/}
+                                            {/*                    <AlertDialogDescription>*/}
+                                            {/*                        Tem a certeza que deseja eliminar a equipa?*/}
+                                            {/*                    </AlertDialogDescription>*/}
+                                            {/*                </AlertDialogHeader>*/}
+                                            {/*                <AlertDialogFooter>*/}
+                                            {/*                    <AlertDialogCancel*/}
+                                            {/*                        variant={"outline"}*/}
+                                            {/*                        onClick={() => setTeamToRemove(null)}*/}
+                                            {/*                    >*/}
+                                            {/*                        Cancel*/}
+                                            {/*                    </AlertDialogCancel>*/}
+                                            {/*                    <AlertDialogAction*/}
+                                            {/*                        variant={"destructive"}*/}
+                                            {/*                        onClick={() => {*/}
+                                            {/*                            teamToRemove(team.id);*/}
+                                            {/*                        }}*/}
+                                            {/*                    >*/}
+                                            {/*                        Confirmar*/}
+                                            {/*                    </AlertDialogAction>*/}
+                                            {/*                </AlertDialogFooter>*/}
+                                            {/*            </AlertDialogContent>*/}
+                                            {/*        </AlertDialog>*/}
+                                            {/*    </DropdownMenuContent>*/}
+                                            {/*</DropdownMenu>*/}
                                     </div>
                                         </div>
                                     <h5 className="text-sm content-end ">{team.department.name}</h5>
@@ -236,7 +236,10 @@ console.log("index", index)
                     fetchTeamsAndParticipants={fetchTeamsAndParticipants}
                     setParticipantEmail={setParticipantEmail}
                     teamId={teamIdForNewParticipant}
-                    onClose={() => setShowAddParticipantModal(false)}
+                    onClose={() => {
+                        setShowAddParticipantModal(false),
+                        Inertia.reload()
+                    }}
                     updateTeam={updateTeam}
                 />
             </Modal>
@@ -254,6 +257,7 @@ console.log("index", index)
                     onClose={() => {
                         setShowAddTeamModal(false);
                         console.log("completed");
+                        Inertia.reload();
                     }}
                     fetchTeamsAndParticipants={fetchTeamsAndParticipants}
                     teamId={teamIdForNewParticipant}

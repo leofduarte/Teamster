@@ -15,6 +15,7 @@ function Team({ teams, id, onTeamSelect }) {
                     { teamId: id }
                 );
                 setAllParticipants(response.data);
+                console.log("Participants:", allParticipants);
             } catch (error) {
                 console.error("Failed to fetch participants:", error);
             }
@@ -83,11 +84,11 @@ function Team({ teams, id, onTeamSelect }) {
             <div className="flex items-center justify-center flex-col">
                 <div key={selectedTeam.id} className="w-full max-w-md mb-5">
                     <div className="mb-3">
-                        <p className=" mt-2 text-xl  text-left">
+                        <p className=" mt-2 text-xl text-left">
                             {selectedTeam.name}
                         </p>
                     </div>
-                    <ScrollArea className="h-72 w-full  overflow-y-auto p-1">
+                    <ScrollArea className="h-72 w-full overflow-y-auto p-1">
                         {selectedTeamParticipants.map((participant) => (
                             <div
                                 key={participant.id}
@@ -109,7 +110,7 @@ function Team({ teams, id, onTeamSelect }) {
                 </div>
                 <button
                     onClick={handleMoreClick}
-                    className=" text-gray-500  hover:text-black self-start"
+                    className=" text-gray-500 hover:text-black self-start"
                 >
                     Mais equipas
                 </button>

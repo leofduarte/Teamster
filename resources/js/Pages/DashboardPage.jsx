@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import Calendar from '../components_ines/Calendar.jsx';
-import Notifications from '../components_ines/Notifications.jsx';
-import Profile from '../components_ines/Profile.jsx';
-import { Layout } from './Layout.jsx';
-import DashboardContent from '../components_ines/DashboardContent.jsx';
-import Joyride from 'react-joyride';
+import React, { useEffect, useState } from "react";
+import Calendar from "../components_ines/Calendar.jsx";
+import Profile from "../components_ines/Profile.jsx";
+import { Layout } from "./Layout.jsx";
+import DashboardContent from "../components_ines/DashboardContent.jsx";
+import Joyride from "react-joyride";
 
 function DashboardPage(props) {
+    const [selectedTeamId, setSelectedTeamId] = useState(null);
+    const teams = props.teams;
 
-    const [participants, setParticipants] = useState([]); // [1]
+    const handleTeamSelect = (teamId) => {
+        setSelectedTeamId(teamId);
+    };
 
     //? Lógica do Tutorial
     const [runTutorial, setRunTutorial] = useState(false);
     useEffect(() => {
-        const isTutorialSeen = localStorage.getItem('tutorialSeen');
+        const isTutorialSeen = localStorage.getItem("tutorialSeen");
         if (!isTutorialSeen) {
             setRunTutorial(true);
         }
@@ -21,60 +24,48 @@ function DashboardPage(props) {
 
     const handleJoyrideCallback = (data) => {
         const { status } = data;
-        const finishedStatuses = ['finished', 'skipped'];
+        const finishedStatuses = ["finished", "skipped"];
 
-        if (finishedStatuses.includes(status)) { // Se tutorial acabado ou skipado
-            localStorage.setItem('tutorialSeen', 'true'); // > Marcado como visto
-            setRunTutorial(false); // > Não executa o tutorial
+        if (finishedStatuses.includes(status)) {
+            localStorage.setItem("tutorialSeen", "true");
+            setRunTutorial(false);
         }
     };
 
     const steps = [
         {
-            target: '.joyride-statistics',
-            content: 'Aqui você vê as estatísticas da equipa.',
-            placement: 'right',
+            target: ".joyride-statistics",
+            content: "Aqui pode ver as estatísticas das suas equipaa",
+            placement: "right",
         },
         {
-            target: '.joyride-teams',
-            content: 'Selecione a equipa que você deseja visualizar.',
-            placement: 'top',
+            target: ".joyride-teams",
+            content: "Aqui pode selecionar a equipa que deseja visualizar.",
+            placement: "top",
         },
         {
-            target: '.joyride-profile',
-            content: 'Pode editar o seu perfil aqui.',
-            placement: 'left',
-        },
-        {
-            target: '.joyride-calendar',
-            content: 'Aqui pode visualizar o seu calendário de eventos.',
-            placement: 'left',
-        },
-        {
-            target: '.joyride-notifications',
-            content: 'Receba as notificações aqui.',
-            placement: 'left',
+            target: ".joyride-calendar",
+            content: "Aqui pode visualizar o seu calendário de eventos.",
+            placement: "left",
         },
     ];
 
     //? Conteudo da Sidebar
     const sidebarContent = (
-        <div className="flex-1 flex flex-col gap-5">
-            <div className="joyride-profile">
-                <Profile />
+        <div className="flex-1 flex flex-col">
+            <div>
+                <Profile id={props.auth} />
             </div>
             <div className="joyride-calendar">
-                <Calendar />
-            </div>
-            <div className="joyride-notifications">
-                <Notifications />
+                <Calendar
+                    teams={teams}
+                    selectedTeamId={selectedTeamId}
+                    onSelectTeam={handleTeamSelect}
+                />
             </div>
         </div>
     );
 
-    console.log("Props", props);
-
-    const teams = props.teams;
 
     return (
         <Layout sidebar={sidebarContent}>
@@ -87,12 +78,16 @@ function DashboardPage(props) {
                 callback={handleJoyrideCallback}
                 styles={{
                     options: {
-                        primaryColor: '#f04',
+                        primaryColor: "#f04",
                         zIndex: 1000,
                     },
                 }}
             />
-            <DashboardContent teams={teams}  /> {/* Conteúdo central -> Estatísticas e Equipas */}
+            <DashboardContent
+                teams={teams}
+                selectedTeamId={selectedTeamId}
+                onSelectTeam={handleTeamSelect}
+            />
         </Layout>
     );
 }

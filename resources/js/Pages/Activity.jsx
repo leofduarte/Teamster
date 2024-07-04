@@ -10,7 +10,7 @@ import {Button} from "@/Components/ui/button.jsx";
 import Profile from "@/components_ines/Profile.jsx";
 import {InertiaLink} from "@inertiajs/inertia-react";
 
-const Activity = ({activity}) => {
+const Activity = ({auth ,activity}) => {
     // ? Lógica para mostrar as atividades no sidebar
     const [activities, setActivities] = useState([]);
     const [selectedActivity, setSelectedActivity] = useState(null);
@@ -57,6 +57,9 @@ const Activity = ({activity}) => {
 
     const sidebar = (
         <div className="w-full flex flex-col">
+            <div className="joyride-profile">
+                <Profile id={auth}/>
+            </div>
             <div className="text-center flex flex-col items-center">
                 <h2 className="text-3xl font-serif mb-3">+ Atividades</h2>
                 {activities.length > 0 ? (
@@ -88,12 +91,6 @@ const Activity = ({activity}) => {
         </div>
     );
 
-    const profileContent = (
-        <div className="joyride-profile">
-            <Profile/>
-        </div>
-    );
-
 
     console.log("Activity ID:", activityId, "Type:", typeof activityId);
 
@@ -101,7 +98,7 @@ const Activity = ({activity}) => {
 
     return (
         <>
-            <Layout sidebar={sidebar} profile={profileContent}>
+            <Layout sidebar={sidebar}>
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 pt-8">
                     <div className="overflow-hidden">
                         <div className="p-6 text-gray-900">
@@ -166,12 +163,19 @@ const Activity = ({activity}) => {
                                             </Button>
                                         </InertiaLink>
 
-                                        <InertiaLink href={`/atividade/${activityId.id}/sendinvite`}
-                                                     method={"get"} as={"button"}>
-                                            <Button className={"gap-1"}>
-                                                Enviar Convite aos Participantes
-                                            </Button>
-                                        </InertiaLink>
+                                        <Button className={"gap-1"} onClick={() => {
+                                            axios.get(`/atividade/${activityId.id}/sendinvite`)
+                                                .then(response => {
+                                                    // Handle the response here
+                                                    console.log(response);
+                                                })
+                                                .catch(error => {
+                                                    // Handle the error here
+                                                    console.error(error);
+                                                });
+                                        }}>
+                                            Enviar Convite aos Participantes
+                                        </Button>
 
 
                                             <InertiaLink href={`/atividade/${activityId.id}`} type={"button"}>

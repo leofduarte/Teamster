@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Participant;
 use App\Models\Question;
+use App\Models\Response;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use App\Models\Questionnaire;
@@ -24,6 +26,7 @@ class QuestionnaireController extends Controller
 
         //add as 3 obrigatórias
         $mandatoryQuestions = Question::where('is_mandatory', 1)->where('questionnaire_id', 1)->get();
+//        dd($mandatoryQuestions);
 
         foreach ($mandatoryQuestions as $mandatoryQuestion) {
             $question = new Question();
@@ -113,4 +116,43 @@ class QuestionnaireController extends Controller
 
         return response()->json(['message' => 'Questionnaire assigned to team successfully'], 201);
     }
+
+    public function getQuestionnairesByParticipantId($id)
+    {
+        $participant = Participant::find($id);
+        $teams = $participant->teams;
+
+//        dd($teams->pluck('id'));
+
+        $questionnaires = collect();
+        foreach ($teams as $team) {
+            $teamQuestionnaires = $team->questionnaires;
+            if($teamQuestionnaires->isNotEmpty()){
+                $questionnaires = $questionnaires->concat($teamQuestionnaires);
+            }
+        }
+
+        $questionsFromThisQuestionnaire = Question::whereIn('questionnaire_id', $questionnaires->pluck('id'))->get()->pluck('id');
+        $hasResponses = Response::where('participant_id', $id)->whereIn('question_id', $questionsFromThisQuestionnaire)->get();
+
+
+        $surveysAnswered = $hasResponses->map(function($response){
+            return $response->question->questionnaire->id;
+        });
+
+        //remove duplicates from array
+        $surveysAnswered = $surveysAnswered->unique();
+
+        //add field to $questionnaires that have been answered
+        $questionnaires->map(function($questionnaire) use ($surveysAnswered){
+            if($surveysAnswered->contains($questionnaire->id)){
+                $questionnaire->answered = true;
+            }else{
+                $questionnaire->answered = false;
+            }
+        });
+
+        return response()->json($questionnaires);
+    }
+
 }

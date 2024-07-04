@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ActivityInvite;
 use App\Models\Activity;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class ActivityController extends Controller
@@ -63,19 +65,22 @@ class ActivityController extends Controller
             return response()->json(['message' => 'PlanActivity not found'], 404);
         }
 
-
         $participants = $activity->planActivity->team->participants;
+        $errors = [];
 
         foreach ($participants as $participant) {
-            //send email to participant
-            dd($planActivity, $activity);
-
-
+            try {
+                Mail::to($participant->email)->send(new ActivityInvite($activity));
+            } catch (\Exception $e) {
+                // Store the error message for later use
+                $errors[] = 'Failed to send invite to ' . $participant->email . ': ' . $e->getMessage();
+            }
         }
 
         return Inertia::render('SendInvite', [
             'activity' => $activity,
-            'planActivity' => $planActivity
+            'planActivity' => $planActivity,
+            'errors' => $errors
         ]);
     }
 }

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import axios from 'axios';
-import backgroundImage from "../../../public/background.svg";
-import logo from "../../../public/build/assets/logo.svg";
+import backgroundImage from "../../../storage/app/public/logos/objetos.svg";
+import logo from "../../../storage/app/public/logos/logo-teamster-login.svg";
 import {Button} from "../Components/ui/button.jsx";
 import {Input} from "../Components/ui/input.jsx";
 import {Label} from "../Components/ui/label.jsx";
 import { Inertia } from '@inertiajs/inertia';
+import {Head} from "@inertiajs/react";
 
 function ParticipantAuth() {
     const [email, setEmail] = useState('');
@@ -35,6 +36,8 @@ function ParticipantAuth() {
     }
     return (
         <>
+            <Head title="Login"/>
+
             <div className="h-screen w-screen bg-[#F8F7FC]">
                 <div>
                     <img className="z-50 fixed h-[10%] w-auto" src={logo} alt="Logo"/>
@@ -49,7 +52,7 @@ function ParticipantAuth() {
                                     <Label className={"text-start"}>E-mail</Label>
                                     <Input className={"mb-2"} type="text" value={email} onChange={e => setEmail(e.target.value)}/>
                                     <Button type="submit">
-                                        Send Code
+                                        Enviar Código
                                     </Button>
                                 </>
                             ) : (

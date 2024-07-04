@@ -107,15 +107,14 @@ function EditProfile({ participant, setIsEditingProfile, isEditingProfile }) {
                     </div>
                 )}
 
-                <Separator orientation={"horizontal"} />
-
-                <a
-                    className="text-sm text-[#F54468] hover:text-red-400 underline text-center mt-2 flex items-center"
-                    href="#"
-                    onClick={handleDeleteClick}
-                >
-                    Eliminar conta
-                </a>
+                {/*<Separator orientation={"horizontal"} />*/}
+                {/*<a*/}
+                {/*    className="text-sm text-[#F54468] hover:text-red-400 underline text-center mt-2 flex items-center"*/}
+                {/*    href="#"*/}
+                {/*    onClick={handleDeleteClick}*/}
+                {/*>*/}
+                {/*    Eliminar conta*/}
+                {/*</a>*/}
             </div>
 
             {showConfirmPopup && (

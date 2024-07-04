@@ -34,26 +34,6 @@ export default function Authenticated({ user, header, children }) {
                                 </NavLink>
                             </div>*/}
 
-                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
-                                <NavLink href={route('addresponse')} active={route().current('addresponse')}>
-                                    Add Response
-                                </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
-                                <NavLink href={route('atividade')} active={route().current('atividade')}>
-                                    Activity Planning
-                                </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
-                                <NavLink href={route('inviteform')} active={route().current('inviteform')}>
-                                    Invite
-                                </NavLink>
-                            </div>
-                            <div className="hidden space-x-8 sm:ms-10 sm:-my-px sm:flex">
-                                <NavLink href={route('teammembers')} active={route().current('teammembers')}>
-                                    Teams/ Members
-                                </NavLink>
-                            </div>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
@@ -81,7 +61,6 @@ export default function Authenticated({ user, header, children }) {
                                             </button>
                                         </span>
                                     </Dropdown.Trigger>
-
                                     <Dropdown.Content>
                                         <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
                                         <Dropdown.Link href={route('logout')} method="post" as="button">

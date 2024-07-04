@@ -27,7 +27,9 @@ const AddParticipantToTeam = ({auth}) => {
                 });
                 const questionnaire_id = response.data.questionnaire_id;
                 router.get('/questionnaires/'+questionnaire_id+'/edit');
+            // router.get(/newfeedback);
             })
+
             .catch(error => {
                 console.error(error);
                 setErrorMessage(error.response.data.message);
@@ -48,9 +50,9 @@ const AddParticipantToTeam = ({auth}) => {
                         <Label htmlFor="name">Title</Label>
                         <Input type="text" name="title" placeholder="Title"/>
                     </div>
-                    {errormessage && (
-                        <p className="text-red-500 text-sm">{errormessage}</p>
-                    )}
+                    {/*{errormessage && (*/}
+                    {/*    <p className="text-red-500 text-sm">{errormessage}</p>*/}
+                    {/*)}*/}
 
                     <div>
                         <Label htmlFor="description">Description</Label>

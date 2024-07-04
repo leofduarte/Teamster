@@ -9,6 +9,7 @@ import {Checkbox} from "@/Components/ui/checkbox.jsx";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/Components/ui/tooltip.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleInfo} from "@fortawesome/free-solid-svg-icons";
+import {Head} from "@inertiajs/react";
 
 const AddParticipantToTeam = ({teamId, onClose}) => {
     const [participantEmails, setParticipantEmails] = useState([]);
@@ -75,14 +76,16 @@ const AddParticipantToTeam = ({teamId, onClose}) => {
     }, [teamId]);
 
     return (
+        <>
         <div className={"p-4 min-h-full"}>
+
             <form id="participantForm" onSubmit={handleAddParticipant}>
-                <h2 className="text-2xl font-bold mb-4">Add Participant to Team</h2>
+                <h2 className="text-2xl font-bold mb-4">Adicionar Participantes à Equipa</h2>
                 <div className={"gap-4 flex flex-col"}>
                     <div className={"flex flex-col"}>
                         <div className="flex flex-row">
                             <Label htmlFor="name" className="block text-sm leading-8 font-medium text-gray-700">
-                                Participant Emails
+                                Emails de Participantes
                             </Label>
                             <TooltipProvider>
                                 <Tooltip>
@@ -94,7 +97,7 @@ const AddParticipantToTeam = ({teamId, onClose}) => {
                                     </TooltipTrigger>
                                     <TooltipContent>
                                         <p className="text-sm">
-                                            Enter the emails of the participants you want to add to the team.
+                                            Adicione os emails dos participantes que deseja adicionar à equipa.
                                         </p>
                                     </TooltipContent>
                                 </Tooltip>
@@ -105,7 +108,7 @@ const AddParticipantToTeam = ({teamId, onClose}) => {
                                    variant={"activity"} placeholder="Email"
                                    onChange={(e) => setEmailInput(e.target.value)}/>
                             <Button variant={"secondary"} className={"ms-2"} type="button" onClick={handleAddEmail}>
-                                Add Email
+                                Adicionar Email
                             </Button>
                             {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
                         </div>
@@ -118,7 +121,7 @@ const AddParticipantToTeam = ({teamId, onClose}) => {
                                 htmlFor="terms"
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                                Extract Emails from .csv/ .xlsx files.
+                                Extrair emails de ficheiros .csv/ .xlsx.
                             </Label>
 
                         </div>
@@ -142,11 +145,12 @@ const AddParticipantToTeam = ({teamId, onClose}) => {
                     )}
 
                     <div className="flex flex-row justify-end">
-                        <Button type="submit">Submit</Button>
+                        <Button type="submit">Submeter</Button>
                     </div>
                 </div>
             </form>
         </div>
+        </>
     )
 };
 export default AddParticipantToTeam;

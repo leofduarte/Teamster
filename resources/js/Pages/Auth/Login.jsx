@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Checkbox from '../../Components/Checkbox';
 import GuestLayout from '../../Layouts/GuestLayout';
 import InputError from '../../Components/InputError';
@@ -6,6 +6,8 @@ import InputLabel from '../..//Components/InputLabel';
 import PrimaryButton from '../../Components/PrimaryButton';
 import TextInput from '../../Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
+import logo from "../../../../storage/app/public/logos/logo-teamster-login.svg";
+import backgroundImage from "../../../../storage/app/public/logos/objetos.svg";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -28,12 +30,20 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
+        <>
+            <Head title="Login"/>
 
-            {status && <div className="mb-4 text-sm font-medium text-green-600">{status}</div>}
+            <div className="h-screen w-screen bg-[#F8F7FC]">
+                <div>
+                    <img className="z-50 fixed h-[10%] w-auto" src={logo} alt="Logo"/>
+                </div>
 
-            <form onSubmit={submit}>
+                <div className="z-10 flex place-content-center justify-center bg-[#F8F7FC] items-center h-[80%]">
+                    <div className="z-10 p-8 bg-white rounded-[2rem] shadow-lg min-h-[300px] min-w-96 flex flex-col justify-center items-center">
+
+                        {status && <div className="mb-4 text-sm font-medium text-green-600">{status}</div>}
+
+                        <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -93,6 +103,15 @@ export default function Login({ status, canResetPassword }) {
                     </PrimaryButton>
                 </div>
             </form>
-        </GuestLayout>
+                </div>
+            </div>
+
+
+            <div
+                className=" z-0 fixed bottom-0 left-0 w-full h-[45%] bg-no-repeat bg-cover"
+                style={{backgroundImage: `url(${backgroundImage})`}}
+            ></div>
+        </div>
+        </>
     );
 }

@@ -3,14 +3,17 @@ import Footer from "@/components_ines/Footer.jsx";
 import React from "react";
 import {Button} from "@/Components/ui/button.jsx";
 import {InertiaLink} from "@inertiajs/inertia-react";
+import {Head} from "@inertiajs/react";
 
 const ManagerOrParticipant = () => {
 
     return (
-        <div className='bg-slate-50 font-poppins h-full'>
+        <div className='bg-slate-50 font-poppins h-full flex flex-col min-h-screen'>
+            <Head title="Login"/>
+
             <Navbar/>
 
-            <div className={"justify-center flex flex-col items-center place-content-center gap-8 my-12"}>
+            <div className={"justify-center flex flex-col items-center place-content-center gap-8 my-12 flex-grow"}>
 
                 <h1 className={"text-center text-3xl font-bold uppercase"}>É um Planeador ou um Participante?</h1>
 
@@ -21,7 +24,7 @@ const ManagerOrParticipant = () => {
                         <h3 className={"text-2xl font-semibold uppercase text-gray-500"}>Login</h3>
                         <h2 className={"text-4xl font-bold uppercase"}>Como Participante</h2>
 
-                        <p className={"mt-4 capitalize max-w-[80%]"}>Pode ver todas as actividades da sua equipa</p>
+                        <p className={"mt-4 capitalize max-w-[80%]"}>Pode ver todas as actividades das suas equipas</p>
                         <InertiaLink href={"/participantauth"}>
                         <Button className={"mt-4"}>Login como Participante</Button>
                             </InertiaLink>
@@ -33,12 +36,11 @@ const ManagerOrParticipant = () => {
                         <h3 className={"text-2xl font-semibold uppercase text-gray-500"}>Login</h3>
                         <h2 className={"text-4xl font-bold uppercase"}>Como Planeador</h2>
 
-                        <p className={"mt-4 capitalize max-w-[80%]"}>Como gestor, pode criar actividades e gerir a equipa</p>
+                        <p className={"mt-4 capitalize max-w-[80%]"}>Como Planeador, pode criar actividades e gerir as suas equipas</p>
                         <InertiaLink href={"/login"}>
-                            <Button className={"mt-4"}>Login Como Planeador Manager</Button>
+                            <Button className={"mt-4"}>Login Como Planeador</Button>
                         </InertiaLink>
                     </div>
-
                 </div>
             </div>
             <Footer/>

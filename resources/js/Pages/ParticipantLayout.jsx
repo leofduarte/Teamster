@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
 import Logo from "../components_ines/Logo";
 import Events from "../components_ines/Events";
@@ -9,10 +9,11 @@ import Medals from "../components_ines/Medals";
 import Level from "../components_ines/Level";
 import EditProfile from "../components_ines/EditProfile";
 import Quizz from "./Quizz.jsx";
-import { Inertia } from "@inertiajs/inertia";
+import {Inertia} from "@inertiajs/inertia";
+import {Button} from "@/Components/ui/button";
+import {Link} from "@inertiajs/inertia-react";
 
 function ParticipantLayout(props) {
-    // Participant logic
     const id = props.user_id;
     console.log("id", id)
     const [events, setEvents] = useState([]);
@@ -24,11 +25,29 @@ function ParticipantLayout(props) {
     const [closestPlanActivity, setClosestPlanActivity] = useState(null);
     const [closestEvent, setClosestEvent] = useState(null);
     const [selectedTeam, setSelectedTeam] = useState(null);
+    const [questionnaires, setQuestionnaires] = useState([]);
 
     const handleTeamSelect = (team) => {
         setSelectedTeam(team);
         console.log("Equipe selecionada:", team);
     };
+
+
+    useEffect(() => {
+        const fetchQuestionnaires = async () => {
+            try {
+                const response = await axios.get(
+                    `/api/getQuestionnairesByParticipantId/${id}`
+                );
+                setQuestionnaires(response.data);
+                console.log("questionnaires", response.data);
+            } catch (error) {
+                console.error("Failed to fetch questionnaires:", error);
+            }
+        };
+
+        fetchQuestionnaires();
+    }, [id]);
 
     // Fetch participant data
     useEffect(() => {
@@ -65,7 +84,6 @@ function ParticipantLayout(props) {
         fetchTeams();
     }, [id]);
 
-    // Update team IDs when teams data is available
     useEffect(() => {
         if (teams.length > 0) {
             const ids = teams.map((team) => team.id);
@@ -74,7 +92,6 @@ function ParticipantLayout(props) {
         }
     }, [teams]);
 
-    // Fetch plan activities
     useEffect(() => {
         const fetchPlanActivities = async () => {
             if (!selectedTeam) return;
@@ -142,45 +159,69 @@ function ParticipantLayout(props) {
 
     return (
         <>
-                <div className="min-h-screen bg-[#F8F7FC] flex flex-col items-center justify-center p-8 font-poppins ">
-                    <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-12">
-                        <div className="flex flex-col gap-12">
-                            <Logo />
-                            <Events
-                                closestEvent={closestEvent}
-                                closestPlanActivity={closestPlanActivity}
-                            />
-                            <Notifications closestEvent={closestEvent} closestPlanActivity={closestPlanActivity} />
-                        </div>
+            <div className="min-h-screen bg-[#F8F7FC] flex flex-col items-center justify-center p-8 font-poppins ">
+                <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <div className="flex flex-col gap-12">
+                        <Logo/>
+                        <Events
+                            closestEvent={closestEvent}
+                            closestPlanActivity={closestPlanActivity}
+                        />
+                        <Notifications closestEvent={closestEvent} closestPlanActivity={closestPlanActivity}/>
+                    </div>
 
-                        <div className="flex flex-col items-center justify-center">
-                            {isEditingProfile ? (
-                                <EditProfile
-                                    participant={participant}
-                                    isEditingProfile={isEditingProfile}
-                                    setIsEditingProfile={setIsEditingProfile}
-                                />
-                            ) : (
-                                <Level
-                                    isEditingProfile={isEditingProfile}
-                                    setIsEditingProfile={setIsEditingProfile}
-                                />
-                            )}
-                        </div>
-                        <div className="flex flex-col gap-12">
-                            <ParticipantProfileSettings
+                    <div className="flex flex-col items-center justify-center">
+                        {isEditingProfile ? (
+                            <EditProfile
                                 participant={participant}
                                 isEditingProfile={isEditingProfile}
                                 setIsEditingProfile={setIsEditingProfile}
                             />
-                            <Team
-                                teams={teams}
-                                id={id}
-                                onTeamSelect={handleTeamSelect}
+                        ) : (
+                            <Level
+                                isEditingProfile={isEditingProfile}
+                                setIsEditingProfile={setIsEditingProfile}
                             />
-                        </div>
+                        )}
+                    </div>
+                    <div className="flex flex-col gap-12">
+                        <ParticipantProfileSettings
+                            participant={participant}
+                            isEditingProfile={isEditingProfile}
+                            setIsEditingProfile={setIsEditingProfile}
+                        />
+                        <Team
+                            teams={teams}
+                            id={id}
+                            onTeamSelect={handleTeamSelect}
+                        />
                     </div>
                 </div>
+
+                <div className="p-4 bg-white rounded-lg drop-shadow-md">
+                    <h2 className="font-serif font-semibold text-2xl text-center">
+                        Questionários de Feedback
+                    </h2>
+                    {questionnaires.map((questionnaire, index) => (
+                        <div key={index} className="flex justify-between items-center">
+                            <div className={"flex flex-col"}>
+                                <h3 className={"font-semibold text-lg"}>{questionnaire.title}</h3>
+                                <p className={"text-xs"}>{questionnaire.description}</p>
+                            </div>
+                            {!questionnaire.answered ? (
+                                <Link href={`/addresponse/${questionnaire.id}/${id}`}>
+                                    <Button className=" py-2 px-4">
+                                        Ir para o Questionário
+                                    </Button>
+                                </Link>
+                            ) : (
+                                <p>Respondido</p>
+
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
         </>
     );
 }

@@ -230,12 +230,12 @@ class QuestionAndResponseController
             return response()->json(['message' => 'Participant or Questionnaire not found'], 404);
         }
 
-        $team = $questionnaire->teams()->first();
+        /*$team = $questionnaire->teams()->first();
         if ($team) {
             $teamId = $team->id;
         } else {
             return response()->json(['message' => 'No teams associated with this questionnaire'], 404);
-        }
+        }*/
 
         foreach ($request->input('responses') as $response) {
 

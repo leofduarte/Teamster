@@ -1,11 +1,10 @@
-import React, { useState, useMemo } from "react";
-import { ScrollArea, ScrollBar } from "../Components/ui/scroll-area.jsx";
+import React, {useState, useMemo} from "react";
+import {ScrollArea, ScrollBar} from "../Components/ui/scroll-area.jsx";
 
-function Teams({ onSelectTeam, selectedTeamId, teams }) {
-    console.log("Teams rendering", {
-        selectedTeamId,
-        teamsLength: teams.length,
-    });
+function Teams({onSelectTeam, selectedTeamId, teams}) {
+
+    console.log("Teams", teams);
+
     const [showAll, setShowAll] = useState(false);
 
     // Sort teams to ensure selected team is first
@@ -21,7 +20,6 @@ function Teams({ onSelectTeam, selectedTeamId, teams }) {
     const visibleTeams = showAll ? sortedTeams : sortedTeams.slice(0, 1);
 
     const handleSelectTeam = (teamId) => {
-        alert(`handleSelectTeam called with teamId: ${teamId}`);
         onSelectTeam(teamId);
     };
 
@@ -30,7 +28,7 @@ function Teams({ onSelectTeam, selectedTeamId, teams }) {
             {teams.length > 0 ? (
                 <>
                     <div className="flex items-center justify-between mt-12 mb-3">
-                        <h2 className="font-manjari font-semibold text-2xl">
+                        <h2 className="font-seriffont-semibold text-2xl">
                             EQUIPAS
                         </h2>
                         <button
@@ -57,7 +55,7 @@ function Teams({ onSelectTeam, selectedTeamId, teams }) {
                                 } hover:border-current`}
                             >
                                 <p className="mb-5 flex items-center">
-                                    <span className="font-manjari mt-2 text-xl font-semibold"></span>
+                                    <span className="font-serifmt-2 text-xl font-semibold">{team.name}</span>
                                     <span className="ml-3">{team.description}</span>
                                 </p>
                                 <div className="overflow-x-auto">
@@ -72,7 +70,7 @@ function Teams({ onSelectTeam, selectedTeamId, teams }) {
                                                         <img
                                                             width={80}
                                                             height={80}
-                                                            src={`https://api.dicebear.com/9.x/big-smile/svg?seed=${participant.name}`}
+                                                            src={`https://api.dicebear.com/9.x/big-smile/svg?seed=${participant.email}`}
                                                             alt={
                                                                 participant.name
                                                             }
@@ -83,7 +81,7 @@ function Teams({ onSelectTeam, selectedTeamId, teams }) {
                                         )}
                                     </div>
                                 </div>
-                                <ScrollBar orientation="horizontal" />
+                                <ScrollBar orientation="horizontal"/>
                             </ScrollArea>
                         </button>
                     ))}
@@ -91,7 +89,7 @@ function Teams({ onSelectTeam, selectedTeamId, teams }) {
             ) : (
                 <>
                     <div className="flex mt-12 mb-3 items-center justify-between">
-                        <h2 className="font-manjari font-semibold text-2xl">
+                        <h2 className="font-seriffont-semibold text-2xl">
                             EQUIPAS
                         </h2>
                         <button

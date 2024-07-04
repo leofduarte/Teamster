@@ -20,4 +20,9 @@ class Response extends Model
         'tooltip',
         'description',
         ];
+
+    public function question()
+    {
+        return $this->belongsTo(Question::class);
+    }
 }

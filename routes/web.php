@@ -8,19 +8,22 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\TeamController;
 use App\Http\Middleware\CheckQuest;
+use App\Models\Question;
+use App\Models\Questionnaire;
+use App\Models\Response;
 use App\Models\Team;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+//Route::get('/', function () {
+//    return Inertia::render('Welcome', [
+//        'canLogin' => Route::has('login'),
+//        'canRegister' => Route::has('register'),
+//        'laravelVersion' => Application::VERSION,
+//        'phpVersion' => PHP_VERSION,
+//    ]);
+//});
 
 Route::get('/dashboard', function() {
     $teams = Team::whereIn('department_id', auth()->user()->departments->pluck('id'))
@@ -33,14 +36,10 @@ Route::get('/dashboard', function() {
 
     return Inertia::render('DashboardPage', [
         'teams' => $teams,]);
-});
+})->name('dashboard')->middleware('auth');
 
-Route::get('/landing', function () {
+Route::get('/', function () {
     return Inertia::render('LandingPage');
-});
-
-Route::get('/invite', function () {
-    return Inertia::render('InviteForm');
 });
 
 Route::post('/newfeedback', function () {
@@ -64,7 +63,7 @@ Route::get('/questionnaires/{id}/edit', [QuestionnaireController::class, 'show']
 Route::delete('/v1/deletequestionnaire/{id}', [QuestionnaireController::class, 'deleteQuestionnaire']);
 
 Route::post('/send-invite', [InvitationController::class, 'sendInvite']);
-Route::get('/invite/{token}', [InvitationController::class, 'showInvitationForm']);
+//Route::get('/invite/{token}', [InvitationController::class, 'showInvitationForm']);
 Route::post('/invitations/respond', [InvitationController::class, 'respondToInvitation']);
 
 Route::get('/teams', function () {
@@ -95,9 +94,24 @@ Route::delete('/teams/{teamId}/questionnaires/{questionnaireId}', [TeamControlle
 Route::get('/teams2', [TeamController::class, 'showTeamMembers'])
     ->middleware('auth');
 
-Route::get('/addresponse', function () {
+/*Route::get('/addresponse/ ', function () {
     return Inertia::render('AddResponse');
-})->middleware('auth')->name('addresponse');
+})->middleware('auth')->name('addresponse');*/
+
+Route::get('/addresponse/{questionnaireId}/{participantId}', function ($questionnaireId, $participantId) {
+    $questions = Question::where('questionnaire_id', $questionnaireId)->pluck('id')->toArray();
+    $existingResponse = Response::whereIn('question_id', $questions)
+        ->where('participant_id', $participantId)
+        ->first();
+    if($existingResponse){
+        return redirect()->route('participant');
+    }
+
+    return Inertia::render('AddResponse', [
+        'questionnaire' => $questionnaireId,
+        'participant' => $participantId
+    ]);
+})->name('addresponse');
 
 Route::get('/invite/{token}', [InvitationController::class, 'acceptInvitation']);
 
@@ -113,9 +127,9 @@ Route::get('/atividade/{id}', function () {
     return Inertia::render('Activity');
 })->middleware('auth')->name('Activity');
 
-Route::get('/atividade/detalhes/{id}', [ActivityController::class, 'show']);
+Route::get('/atividade/detalhes/{id}', [ActivityController::class, 'show'])->middleware('auth');
 
-Route::get('/atividade/{id}', [ActivityController::class, 'redoActivity']);
+Route::get('/atividade/{id}', [ActivityController::class, 'redoActivity'])->middleware('auth');
 
 Route::get('/participantauth', function () {
     return Inertia::render('ParticipantAuth');
@@ -143,7 +157,7 @@ Route::get('/participantquest', function () {
 
 Route::get('/atividade/{id}/pdf', [PdfController::class, 'generatePdf']);
 
-Route::get('/who', function () {
+Route::get('/plannerorparticipant', function () {
        return Inertia::render('ManagerOrParticipant');
 });
 

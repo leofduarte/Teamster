@@ -7,10 +7,12 @@ import Features from '../components_ines/Features';
 import Plans from '../components_ines/Plans';
 import ScrollToTop from '../components_ines/ScrollToTop';
 import Footer from '../components_ines/Footer';
+import {Head} from "@inertiajs/react";
 
 const LandingPage = () => {
   return (
     <div className='bg-slate-50 font-poppins'>
+        <Head title="Landing"/>
       <Navbar />
       <Intro />
       <Sponsorships />

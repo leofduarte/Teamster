@@ -1,5 +1,5 @@
-import React, {useEffect} from "react";
-import logo from "../../../public/build/assets/logo.svg";
+import React from "react";
+import logo from "../../../storage/app/public/logos/logo-teamster.svg";
 import {Inertia} from "@inertiajs/inertia";
 
 
@@ -7,6 +7,10 @@ function Layout({children, sidebar, profile}) {
 
     const isActive = (path) => {
         return window.location.pathname === path ? 'border-gray-800 border-e-4 border-solid ' : '';
+    }
+
+    const redirectToDash = () => {
+        Inertia.visit('/dashboard');
     }
 
     return (
@@ -18,10 +22,11 @@ function Layout({children, sidebar, profile}) {
             >
                 <div className="w-full h-full flex flex-col">
 
-                    <div className="">
-                        <img src={logo} className="h-28 w-auto" alt="Logo"/>
+                    <div>
+                        <img src={logo} className="h-auto w-fit cursor-pointer" alt="Logo" onClick={redirectToDash}/>
                     </div>
-                    <div className={"flex flex-col justify-between h-screen"}
+
+                    <div className={"flex flex-col justify-between h-screen text-lg  mt-4"}
                     >
                         <div>
                             <div
@@ -34,7 +39,7 @@ function Layout({children, sidebar, profile}) {
                                 </button>
                             </div>
                             <div
-                                className={`py-2 border-e-4 border-solid border-white hover:border-gray-800 ${isActive('/atividade')}`}>
+                                className={`py-2 border-e-4 border-solid border-white hover:border-gray-300 ${isActive('/atividade')}`}>
                                 <button className="w-full text-left cursor-pointer ms-5"
                                         onClick={() => Inertia.visit('/atividade')}
                                 >
@@ -42,15 +47,7 @@ function Layout({children, sidebar, profile}) {
                                 </button>
                             </div>
                             <div
-                                className={`py-2 border-e-4 border-solid border-white hover:border-gray-800 ${isActive('/analise')}`}>
-                                <button className="w-full text-left cursor-pointer ms-5"
-                                        onClick={() => Inertia.visit('/analise')}
-                                >
-                                    Análise
-                                </button>
-                            </div>
-                            <div
-                                className={`py-2 border-e-4 border-solid border-white hover:border-gray-800 ${isActive('/feedback')}`}>
+                                className={`py-2 border-e-4 border-solid border-white hover:border-gray-300 ${isActive('/feedback')}`}>
                                 <button className="w-full text-left cursor-pointer ms-5"
                                         onClick={() => Inertia.visit('/feedback')}
                                 >
@@ -58,15 +55,7 @@ function Layout({children, sidebar, profile}) {
                                 </button>
                             </div>
                             <div
-                                className={`py-2 border-e-4 border-solid border-white hover:border-gray-800 ${isActive('/addresponse')}`}>
-                                <button className="w-full text-left cursor-pointer ms-5"
-                                        onClick={() => Inertia.visit('/addresponse')}
-                                >
-                                    Responder Questionário (apenas para participantes)
-                                </button>
-                            </div>
-                            <div
-                                className={`py-2 border-e-4 border-solid border-white hover:border-gray-800 ${isActive('/teams')}`}>
+                                className={`py-2 border-e-4 border-solid border-white hover:border-gray-300 ${isActive('/teams')}`}>
                                 <button className="w-full text-left cursor-pointer ms-5"
                                         onClick={() => Inertia.visit('/teams')}
                                 >
@@ -93,14 +82,13 @@ function Layout({children, sidebar, profile}) {
             }
             <div className="flex h-full w-[20%] bg-white fixed right-0 justify-center">
                 {sidebar && (
-                    <div className={"py-6  px-4"}>
+                    <div className={"py-6 px-4"}>
                         {sidebar}
                     </div>
                 )}
             </div>
         </div>
-    )
-        ;
+    );
 }
 
 export {Layout};

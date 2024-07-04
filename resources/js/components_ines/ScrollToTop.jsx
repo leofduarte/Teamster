@@ -9,10 +9,10 @@ const ScrollToTop = () => {
   return (
 
     <button
-      className="fixed bottom-4 right-4"
+      className="fixed bottom-4 right-4 z-20"
       onClick={scrollToTop}
     >
-          {/*<IoIosArrowDropupCircle className='w-24 h-24' style={{ color: '#333333' }} />*/}
+          {/*<IoIosArrowDropupCircle className='w-24 h-24' style={{ color: '#242424' }} />*/}
     </button>
   );
 };

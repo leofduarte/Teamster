@@ -9,9 +9,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Team;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Mail\QuestionnaireAdded;
+
 
 class TeamController extends Controller
 {
@@ -319,8 +322,15 @@ class TeamController extends Controller
             return redirect()->back()->with('error',  'Team or questionnaire not found');
         }
 
-        $team->questionnaires()->attach($questionnaireId);
+        // Check if the questionnaire is already attached to the team
+        if (!$team->questionnaires->contains($questionnaireId)) {
+            $team->questionnaires()->attach($questionnaireId);
+        }
 
+        $participants = $team->participants;
+        foreach ($participants as $participant) {
+            Mail::to($participant->email)->send(new QuestionnaireAdded($questionnaire));
+        }
         return redirect()->back()->with('success', 'Questionnaire added to team successfully');
     }
 
@@ -357,4 +367,5 @@ class TeamController extends Controller
             return response()->json(['error' => 'Failed to fetch teams'], 500);
         }
     }
+
 }

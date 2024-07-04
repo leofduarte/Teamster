@@ -5,14 +5,14 @@ import Radio_CP from "@/Components/EmployeeForm/InputsComponents/Radio_cp";
 import {Button} from "@/Components/ui/button";
 import axios from "axios";
 import {toast} from "@/Components/ui/use-toast.js";
-import {Input} from "@/Components/ui/input.jsx";
 import {Head} from "@inertiajs/react";
-import {Label} from "@/Components/ui/label";
 import {Layout} from "./Layout";
+import {Inertia} from "@inertiajs/inertia";
 
-const AddResponse = ({questionnaire}) => {
-    const [questionnaire_id, setQuestionnaire_id] = useState(92);
-    const [participant_id, setParticipant_id] = useState(null);
+const AddResponse = ({questionnaire, participant}) => {
+    console.log(questionnaire, participant);
+    const [questionnaire_id, setQuestionnaire_id] = useState(questionnaire);
+    const [participant_id, setParticipant_id] = useState(participant);
     const [questions, setQuestions] = useState([]);
     const [responses, setResponses] = useState({});
 
@@ -27,8 +27,11 @@ const AddResponse = ({questionnaire}) => {
         console.log('Responses:', responses);
     }, [responses]);
 
+    console.log('Questionnaire:', questionnaire);
+
     const handleSubmitResponses = async (e) => {
         e.preventDefault();
+        console.log(questionnaire_id);
         try {
             const response = await axios.post('/api/v1/addresponses', {
                 responses: Object.values(responses),
@@ -40,6 +43,7 @@ const AddResponse = ({questionnaire}) => {
                 title: "Success!",
                 description: `${response.data.message}`,
             });
+            Inertia.visit(`/participant`);
         } catch (error) {
             console.error(error);
             toast({
@@ -72,24 +76,19 @@ const AddResponse = ({questionnaire}) => {
         }
     }, [questionnaire_id]);
 
-    useEffect(() => {
+   /* useEffect(() => {
         if (questionnaire && questionnaire !== null) {
             console.log(questionnaire);
             setQuestionnaire_id(questionnaire.id);
         }
-    }, [questionnaire]);
+    }, [questionnaire]);*/
 
     return (
         <div>
             <Layout sidebar={
-                <div
-                    className={"flex flex-col gap-4 h-screen justify-center items-center place-content-center"}>
-                    <div>
-                        <Label>Participant ID</Label>
-                        <Input className={""} type={"number"} label={"Participant ID"}
-                               onChange={(e) => setParticipant_id(e.target.value)}/>
-                    </div>
-                </div>
+                <div>
+
+                 </div>
             }>
                 <Head title="Add Response"/>
 
@@ -141,7 +140,7 @@ const AddResponse = ({questionnaire}) => {
                                 ))}
                             </div>
                             <div className={"flex justify-end"}>
-                                <Button onClick={handleSubmitResponses}>Submit Responses</Button>
+                                <Button onClick={handleSubmitResponses}>Submeter Respostas</Button>
                             </div>
                         </div>
                     </div>

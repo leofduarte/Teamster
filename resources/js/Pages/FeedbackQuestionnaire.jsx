@@ -141,7 +141,7 @@ const Questionnaire = ({newquestionnaire_id}) => {
             }>
                 <Head title="Formulário de Feedback" />
 
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 pt-12">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 pt-12 bg-red-500">
                     <div className="overflow-hidden">
                         <div className="p-6 text-gray-900">
                             <h1 className={"text-3xl font-bold text-black"}>

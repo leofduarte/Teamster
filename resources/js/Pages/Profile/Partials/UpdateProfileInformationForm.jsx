@@ -20,6 +20,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
     };
 
     return (
+
         <section className={className}>
             <header>
                 <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>

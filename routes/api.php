@@ -84,3 +84,6 @@ Route::post('/v1/saveTraits/{id}', [ParticipantController::class, 'saveTraits'])
 Route::post('/v1/saveRestrictions/{id}', [ParticipantController::class, 'saveRestrictions']);
 Route::post('/v1/appendTraits/{id}', [ParticipantController::class, 'appendTraits']);
 Route::post('/v1/getTeamsByParticipantId/{id}', [TeamController::class, 'getTeamsByParticipantId']);
+
+Route::get('/getQuestionnairesByParticipantId/{id}', [QuestionnaireController::class, 'getQuestionnairesByParticipantId']);
+

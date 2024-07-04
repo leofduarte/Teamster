@@ -1,29 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Statistics from "./Statistics.jsx";
 import Teams from "./Teams.jsx";
 
-function DashboardContent({ teams }) {
-    console.log("DashboardContent rendering", teams);
-    const [selectedTeamId, setSelectedTeamId] = useState(null);
-
-    console.log("selectedTeamId", selectedTeamId);
-
-    // Lógica para listar as equipas e selecionar apenas a primeira, a não ser que já haja uma equipa selecionada
-    useEffect(() => {
-    }, [selectedTeamId]);
+function DashboardContent({ teams, selectedTeamId, onSelectTeam }) {
 
     return (
         <div className="px-8 bg-[#F8F7FC] flex-2 mr-5 mb-8 overflow-hidden">
             <div className="mt-5">
-                <h1 className="mb-20 mt-10 text-4xl font-bold">Dashboard</h1>
+                <h1 className="mb-16 mt-10 text-4xl font-bold">Dashboard</h1>
             </div>
             <div className="joyride-statistics">
-                <Statistics teamId={selectedTeamId} />
+                <Statistics teams={teams}
+                            onSelectTeam={onSelectTeam}
+                            selectedTeamId={selectedTeamId} />
             </div>
             <div className="joyride-teams">
                 <Teams
                     teams={teams}
-                    onSelectTeam={setSelectedTeamId}
+                    onSelectTeam={onSelectTeam}
                     selectedTeamId={selectedTeamId}
                 />
             </div>

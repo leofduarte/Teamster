@@ -33,6 +33,7 @@ import Profile from "@/components_ines/Profile.jsx";
 function PlanActivity(props) {
     const [activities, setActivities] = useState([]);
     const [selectedActivity, setSelectedActivity] = useState(null);
+    const [loadingMessage, setLoadingMessage] = useState("");
 
     console.log("Props:", props);
     console.log(props.planActivity);
@@ -66,6 +67,9 @@ function PlanActivity(props) {
 
     const sidebar = (
         <div className="w-full flex flex-col">
+            <div className="joyride-profile">
+                <Profile id={props.auth}/>
+            </div>
             <div className="text-center flex flex-col items-center">
                 <h2 className="text-3xl font-serif mb-3">+ Atividades</h2>
                 {activities.length > 0 ? (
@@ -97,11 +101,6 @@ function PlanActivity(props) {
         </div>
     );
 
-    const profileContent = (
-        <div className="joyride-profile">
-            <Profile/>
-        </div>
-    );
 
     //? Lógica para quando uma atividade é selecionada posteriormente e os preencher os valores
     const [selectedPlanActivity, setSelectedPlanActivity] = useState(props.planActivity);
@@ -388,10 +387,12 @@ function PlanActivity(props) {
         }
 
         try {
+            setLoadingMessage("A sua atividade está a ser gerada...");
             // Primeiro, busca os partners
             await fetchPartners(localizacao);
 
             console.log("Enviando o formulário...");
+
             const requestOne = axios.post("/api/v1/atividade-inicial", {
                 ...form,
                 orcamento: [form.orcamento[0]],
@@ -403,6 +404,7 @@ function PlanActivity(props) {
                 partnersDescription,
                 partnersUrl,
             });
+            setLoadingMessage("");
             const requestTwo = axios.post("/api/v1/save-plan-activities", {
                 ...form,
                 orcamento: [form.orcamento[0]],
@@ -414,6 +416,8 @@ function PlanActivity(props) {
                 requestOne,
                 requestTwo,
             ]);
+
+            setLoadingMessage("");
 
             const {
                 nome,
@@ -446,6 +450,7 @@ function PlanActivity(props) {
             }
         } catch (error) {
             console.error("Erro ao enviar formulário:", error);
+            setLoadingMessage("");
         }
     };
 
@@ -477,7 +482,7 @@ function PlanActivity(props) {
     //? Finalmente, o return
     return (
         <>
-            <Layout sidebar={sidebar} profile={profileContent}>
+            <Layout sidebar={sidebar} >
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 pt-12">
                     <div className="overflow-hidden">
                         <div className="p-6 text-gray-900">
@@ -715,7 +720,7 @@ function PlanActivity(props) {
 
                                         </div>
                                     </div>
-                                    <div className={"flex place-content-end justify-end"}>
+                                    <div className={"flex place-content-end justify-end flex-col"}>
                                         <Button type="button" onClick={sendForm}>
                                             <FontAwesomeIcon
                                                 className="mr-2"
@@ -723,12 +728,14 @@ function PlanActivity(props) {
                                             />
                                             Gerar atividade
                                         </Button>
+
+                                        <p className="text-gray-500 text-sm">
+                                            {loadingMessage}
+                                        </p>
                                     </div>
 
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>

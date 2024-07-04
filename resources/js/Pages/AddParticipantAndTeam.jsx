@@ -126,12 +126,12 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
     return (
         <div className={"p-4 min-h-full "}>
             <form id="teamForm" onSubmit={handleAddTeamAndParticipant}>
-                <h2 className="text-2xl font-bold mb-4">Add Team and Participants</h2>
+                <h2 className="text-2xl font-bold mb-4">Adicione Equipa e Participantes</h2>
                 <div className={"gap-4 flex flex-col"}>
                     <div className={"flex flex-col"}>
                         <div className="flex flex-row">
                             <Label htmlFor="name" className="block text-sm leading-8 font-medium text-gray-700">
-                                Team Name
+                                Nome da Equipa
                             </Label>
                             <TooltipProvider onOpenAutoFocus={(event) => event.preventDefault()}>
                                 <Tooltip>
@@ -142,8 +142,8 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
                                         />
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        <p className="text-sm">Enter the name of your Team. Example: <strong>Marketing
-                                            Team</strong></p>
+                                        <p className="text-sm">Insira o nome da equipa. Exemplo: <strong>Equipa de Marketing
+                                            </strong></p>
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
@@ -170,7 +170,7 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
                             }}
                         >
                             <SelectTrigger className="min-w-fit">
-                                <SelectValue placeholder="Select a Department"/>
+                                <SelectValue placeholder="Selecione um Departmento"/>
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup label="Departments">
@@ -192,7 +192,7 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
                                                onChange={(e) => setNewDepartmentName(e.target.value)}/>
                                         <Button variant={"secondary"} className={"ms-2 mt-1"} type="button"
                                                 onClick={handleAddDepartment}>
-                                            Add Department
+                                            Adicionar Departmento
                                         </Button>
                                     </div>
                                 </SelectGroup>
@@ -203,7 +203,7 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
                     <div className={"flex flex-col"}>
                         <div className="flex flex-row">
                             <Label htmlFor="emails" className="block text-sm leading-8 font-medium text-gray-700">
-                                Participant Emails
+                                Emails de Participantes
                             </Label>
                             <TooltipProvider>
                                 <Tooltip>
@@ -215,7 +215,7 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
                                     </TooltipTrigger>
                                     <TooltipContent>
                                         <p className="text-sm">
-                                            Enter the emails of the participants you want to add to the team.
+                                            Adicione os emails dos participantes que deseja adicionar à equipa.
                                         </p>
                                     </TooltipContent>
                                 </Tooltip>
@@ -232,7 +232,7 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
                                    }}/>
                             <Button variant={"secondary"} className={"ms-2 mt-1"} type="button"
                                     onClick={handleAddEmail}>
-                                Add Email
+                                Adicionar Email
                             </Button>
                         </div>
 
@@ -244,7 +244,7 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
                                 htmlFor="terms"
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                                Extract Emails from .csv/ .xlsx files.
+                                Extrair emails de ficheiros .csv/ .xlsx.
                             </Label>
                         </div>
 
@@ -265,7 +265,7 @@ const AddParticipantAndTeam = ({auth, onClose, fetchTeamsAndParticipants, depart
 
                     <div className={"flex justify-end"}>
                         <Button type="submit">
-                            Add Team and Participants
+                            Adicionar Equipa e Participantes
                         </Button>
                     </div>
                 </div>

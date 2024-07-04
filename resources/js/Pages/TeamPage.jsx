@@ -229,22 +229,20 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
                                                                      className={"px-2 focus-visible:ring-0"}/>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()}>
-                                                    <DropdownMenuItem>Resend Invite</DropdownMenuItem>
                                                     <AlertDialog>
                                                         <AlertDialogTrigger asChild
                                                                             className={"hover:text-red-100"}>
                                                             <DropdownMenuItem onSelect={(e) => e.preventDefault()}
                                                                               onClick={() => setParticipantToRemove(participant.id)}
                                                                               className={"text-red-500"}>
-                                                                Eliminate
+                                                                Eliminar
                                                             </DropdownMenuItem>
                                                         </AlertDialogTrigger>
                                                         <AlertDialogContent>
                                                             <AlertDialogHeader>
-                                                                <AlertDialogTitle>Please Confirm!</AlertDialogTitle>
+                                                                <AlertDialogTitle>Por favor confirme!</AlertDialogTitle>
                                                                 <AlertDialogDescription>
-                                                                    Are you sure you want to remove this participant
-                                                                    from the team?
+                                                                    Tem a certeza que deseja eliminar este participante?
                                                                 </AlertDialogDescription>
                                                             </AlertDialogHeader>
                                                             <AlertDialogFooter>
@@ -252,16 +250,17 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
                                                                     variant={"outline"}
                                                                     onClick={() => setParticipantToRemove(null)}
                                                                 >
-                                                                    Cancel
+                                                                    Cancelar
                                                                 </AlertDialogCancel>
                                                                 <AlertDialogAction
                                                                     variant={"destructive"}
                                                                     onClick={() => {
                                                                         removeParticipant(team.id, participantToRemove);
                                                                         setParticipantToRemove(null);
+                                                                        Inertia.reload();
                                                                     }}
                                                                 >
-                                                                    Continue
+                                                                    Confirmar
                                                                 </AlertDialogAction>
                                                             </AlertDialogFooter>
                                                         </AlertDialogContent>
@@ -366,8 +365,7 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
                                     </h3>
                                     <Separator orientation={"horizontal"}/>
 
-
-                                    {questionnaires.length === 0 ? (
+                                    {questionnaires || userQuestionnaires    ? (
                                     <div className={"flex flex-col gap-2"}>
                                         {questionnaires.map((questionnaire, index) => (
                                             <div key={index} className={"flex flex-col"}>
@@ -409,7 +407,7 @@ const TeamPage = ({team, participants, countStatus3, questionnaires, userQuestio
                                                         as="button"
                                                         className="bg-primary text-primary-foreground hover:bg-primary/90 text-sm text-white p-2 rounded-md"
                                                     >
-                                                        Add to team
+                                                        Associar às Equipa
                                                     </InertiaLink>
                                                 </div>
                                             ))}

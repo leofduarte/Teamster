@@ -41,6 +41,7 @@ class InvitationController extends Controller
 
     public function showInvitationForm($token)
     {
+        dd($token);
         $invitation = Invitation::where('token', $token)->firstOrFail();
 
         return response()->json(['invitation' => $invitation]);
@@ -64,19 +65,12 @@ class InvitationController extends Controller
 
     public function acceptInvitation(Request $request, $token)
     {
-
-
         $invitation = Invitation::where('token', $token)->firstOrFail();
+        $participant = Participant::where('email', $invitation->email)->firstOrFail();
 
-        $participant = Participant::where('email', $request->email)->firstOrFail();
+        $participant->teams()->updateExistingPivot($invitation->team_id, ['status_id' => 1], false);
 
-        dd($invitation);
-
-        //$invitation->delete();
-
-
-
-
-        return response()->json(['message' => 'You have successfully joined the team.']);
+        $invitation->delete();
+        return redirect('participant');
     }
 }
